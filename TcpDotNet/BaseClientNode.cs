@@ -96,8 +96,8 @@ public abstract class BaseClientNode : Node
         await packet.DeserializeAsync(bufferReader);
         await targetStream.DisposeAsync();
 
-        if (RegisteredPacketHandlers.TryGetValue(packetType, out PacketHandler? packetHandler))
-            await packetHandler.HandleAsync(this, packet);
+        if (RegisteredPacketHandlers.TryGetValue(packetType, out IReadOnlyCollection<PacketHandler>? handlers))
+            await Task.WhenAll(handlers.Select(h => h.HandleAsync(this, packet)));
 
         return packet;
     }

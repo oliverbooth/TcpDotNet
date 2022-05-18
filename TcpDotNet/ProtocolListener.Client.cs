@@ -32,7 +32,8 @@ public sealed partial class ProtocolListener
             foreach (Type packetType in ParentListener.RegisteredPackets.Values)
                 RegisterPacket(packetType);
 
-            foreach ((Type packetType, PacketHandler handler) in ParentListener.RegisteredPacketHandlers)
+            foreach ((Type packetType, IReadOnlyCollection<PacketHandler>? handlers) in ParentListener.RegisteredPacketHandlers)
+            foreach (PacketHandler handler in handlers)
                 RegisterPacketHandler(packetType, handler);
 
             Task.Run(ReadLoopAsync);

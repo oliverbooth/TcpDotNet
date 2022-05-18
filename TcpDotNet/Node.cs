@@ -12,7 +12,7 @@ namespace TcpDotNet;
 public abstract class Node : IDisposable
 {
     private readonly ConcurrentDictionary<int, Type> _registeredPackets = new();
-    private readonly ConcurrentDictionary<Type, PacketHandler> _registeredPacketHandlers = new();
+    private readonly ConcurrentDictionary<Type, List<PacketHandler>> _registeredPacketHandlers = new();
 
     /// <summary>
     ///     Gets the underlying socket for this node.
@@ -31,8 +31,9 @@ public abstract class Node : IDisposable
     ///     Gets the registered packets for this node.
     /// </summary>
     /// <value>The registered packets.</value>
-    public IReadOnlyDictionary<Type, PacketHandler> RegisteredPacketHandlers =>
-        new ReadOnlyDictionary<Type, PacketHandler>(_registeredPacketHandlers);
+    public IReadOnlyDictionary<Type, IReadOnlyCollection<PacketHandler>> RegisteredPacketHandlers =>
+        new ReadOnlyDictionary<Type, IReadOnlyCollection<PacketHandler>>(
+            _registeredPacketHandlers.ToDictionary(p => p.Key, p => (IReadOnlyCollection<PacketHandler>) p.Value.AsReadOnly()));
 
     /// <inheritdoc />
     public void Dispose()
@@ -54,7 +55,14 @@ public abstract class Node : IDisposable
         if (packetType is null) throw new ArgumentNullException(nameof(packetType));
         if (handler is null) throw new ArgumentNullException(nameof(handler));
         RegisterPacket(packetType);
-        _registeredPacketHandlers.TryAdd(packetType, handler);
+
+        if (!_registeredPacketHandlers.TryGetValue(packetType, out List<PacketHandler>? handlers))
+        {
+            handlers = new List<PacketHandler>();
+            _registeredPacketHandlers.TryAdd(packetType, handlers);
+        }
+
+        handlers.Add(handler);
     }
 
     /// <summary>
@@ -69,7 +77,14 @@ public abstract class Node : IDisposable
     {
         if (handler is null) throw new ArgumentNullException(nameof(handler));
         RegisterPacket<TPacket>();
-        _registeredPacketHandlers.TryAdd(typeof(TPacket), handler);
+
+        if (!_registeredPacketHandlers.TryGetValue(typeof(TPacket), out List<PacketHandler>? handlers))
+        {
+            handlers = new List<PacketHandler>();
+            _registeredPacketHandlers.TryAdd(typeof(TPacket), handlers);
+        }
+
+        handlers.Add(handler);
     }
 
     /// <summary>
