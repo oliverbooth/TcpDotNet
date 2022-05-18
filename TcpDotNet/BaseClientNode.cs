@@ -53,8 +53,9 @@ public abstract class BaseClientNode : Node
     /// <summary>
     ///     Reads the next packet from the client's stream.
     /// </summary>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>The next packet, or <see langword="null" /> if no valid packet was read.</returns>
-    public async Task<Packet?> ReadNextPacketAsync()
+    public async Task<Packet?> ReadNextPacketAsync(CancellationToken cancellationToken = default)
     {
         await using var networkStream = new NetworkStream(BaseSocket);
         using var networkReader = new ProtocolReader(networkStream);
@@ -97,7 +98,7 @@ public abstract class BaseClientNode : Node
         await targetStream.DisposeAsync();
 
         if (RegisteredPacketHandlers.TryGetValue(packetType, out IReadOnlyCollection<PacketHandler>? handlers))
-            await Task.WhenAll(handlers.Select(h => h.HandleAsync(this, packet)));
+            await Task.WhenAll(handlers.Select(h => h.HandleAsync(this, packet, cancellationToken)));
 
         return packet;
     }
@@ -106,8 +107,9 @@ public abstract class BaseClientNode : Node
     ///     Sends a packet to the remote endpoint.
     /// </summary>
     /// <param name="packet">The packet to send.</param>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <typeparam name="TPacket">The type of the packet.</typeparam>
-    public async Task SendPacketAsync<TPacket>(TPacket packet)
+    public async Task SendPacketAsync<TPacket>(TPacket packet, CancellationToken cancellationToken = default)
         where TPacket : Packet
     {
         var buffer = new MemoryStream();
@@ -130,13 +132,13 @@ public abstract class BaseClientNode : Node
                 break;
         }
 
-        await targetStream.FlushAsync();
+        await targetStream.FlushAsync(cancellationToken);
         buffer.Position = 0;
 
         await using var networkStream = new NetworkStream(BaseSocket);
         await using var networkWriter = new ProtocolWriter(networkStream);
         networkWriter.Write((int) buffer.Length);
-        await buffer.CopyToAsync(networkStream);
-        await networkStream.FlushAsync();
+        await buffer.CopyToAsync(networkStream, cancellationToken);
+        await networkStream.FlushAsync(cancellationToken);
     }
 }

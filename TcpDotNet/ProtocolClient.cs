@@ -22,6 +22,7 @@ public sealed class ProtocolClient : BaseClientNode
     /// </summary>
     /// <param name="host">The remote host to which this client should connect.</param>
     /// <param name="port">The remote port to which this client should connect.</param>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <exception cref="ArgumentNullException"><paramref name="host" /> is <see langword="null" />.</exception>
     /// <exception cref="ArgumentException"><paramref name="host" /> contains an empty string.</exception>
     /// <exception cref="ArgumentOutOfRangeException">
@@ -29,9 +30,9 @@ public sealed class ProtocolClient : BaseClientNode
     ///     than <see cref="IPEndPoint.MaxPort" />.
     /// </exception>
     /// <exception cref="SocketException">An error occurred when attempting to access the socket.</exception>
-    public Task ConnectAsync(string host, int port)
+    public Task ConnectAsync(string host, int port, CancellationToken cancellationToken = default)
     {
-        return ConnectAsync(new DnsEndPoint(host, port));
+        return ConnectAsync(new DnsEndPoint(host, port), cancellationToken);
     }
 
     /// <summary>
@@ -39,15 +40,16 @@ public sealed class ProtocolClient : BaseClientNode
     /// </summary>
     /// <param name="address">The remote <see cref="IPAddress" /> to which this client should connect.</param>
     /// <param name="port">The remote port to which this client should connect.</param>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <exception cref="ArgumentOutOfRangeException">
     ///     <paramref name="port" /> is less than <see cref="IPEndPoint.MinPort" />. -or - <paramref name="port" /> is greater
     ///     than <see cref="IPEndPoint.MaxPort" />. -or- <paramref name="address" /> is less than 0 or greater than
     ///     0x00000000FFFFFFFF.
     /// </exception>
     /// <exception cref="SocketException">An error occurred when attempting to access the socket.</exception>
-    public Task ConnectAsync(IPAddress address, int port)
+    public Task ConnectAsync(IPAddress address, int port, CancellationToken cancellationToken = default)
     {
-        return ConnectAsync(new IPEndPoint(address, port));
+        return ConnectAsync(new IPEndPoint(address, port), cancellationToken);
     }
 
     /// <summary>

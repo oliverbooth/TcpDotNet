@@ -11,7 +11,8 @@ public abstract class PacketHandler
     /// </summary>
     /// <param name="recipient">The recipient of the packet.</param>
     /// <param name="packet">The packet to handle.</param>
-    public abstract Task HandleAsync(BaseClientNode recipient, Packet packet);
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    public abstract Task HandleAsync(BaseClientNode recipient, Packet packet, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -26,9 +27,9 @@ public abstract class PacketHandler<T> : PacketHandler
     public static readonly PacketHandler<T> Empty = new NullPacketHandler<T>();
 
     /// <inheritdoc />
-    public override Task HandleAsync(BaseClientNode recipient, Packet packet)
+    public override Task HandleAsync(BaseClientNode recipient, Packet packet, CancellationToken cancellationToken = default)
     {
-        if (packet is T actual) return HandleAsync(recipient, actual);
+        if (packet is T actual) return HandleAsync(recipient, actual, cancellationToken);
         return Task.CompletedTask;
     }
 
@@ -37,7 +38,8 @@ public abstract class PacketHandler<T> : PacketHandler
     /// </summary>
     /// <param name="recipient">The recipient of the packet.</param>
     /// <param name="packet">The packet to handle.</param>
-    public abstract Task HandleAsync(BaseClientNode recipient, T packet);
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    public abstract Task HandleAsync(BaseClientNode recipient, T packet, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -48,7 +50,7 @@ internal sealed class NullPacketHandler<T> : PacketHandler<T>
     where T : Packet
 {
     /// <inheritdoc />
-    public override Task HandleAsync(BaseClientNode recipient, T packet)
+    public override Task HandleAsync(BaseClientNode recipient, T packet, CancellationToken cancellationToken = default)
     {
         return Task.CompletedTask;
     }
