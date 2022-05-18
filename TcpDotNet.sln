@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpDotNet", "TcpDotNet\TcpDotNet.csproj", "{AB572C69-102C-4572-B530-EDDF051AC571}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpDotNet.ListenerIntegrationTest", "TcpDotNet.ListenerIntegrationTest\TcpDotNet.ListenerIntegrationTest.csproj", "{FED8DEE4-295C-4C2A-80D4-DDA23C45912A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpDotNet.ClientIntegrationTest", "TcpDotNet.ClientIntegrationTest\TcpDotNet.ClientIntegrationTest.csproj", "{ED9C812F-9835-4268-9AFC-57CFAAC16162}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB572C69-102C-4572-B530-EDDF051AC571}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB572C69-102C-4572-B530-EDDF051AC571}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB572C69-102C-4572-B530-EDDF051AC571}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB572C69-102C-4572-B530-EDDF051AC571}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FED8DEE4-295C-4C2A-80D4-DDA23C45912A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED8DEE4-295C-4C2A-80D4-DDA23C45912A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED8DEE4-295C-4C2A-80D4-DDA23C45912A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED8DEE4-295C-4C2A-80D4-DDA23C45912A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED9C812F-9835-4268-9AFC-57CFAAC16162}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED9C812F-9835-4268-9AFC-57CFAAC16162}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED9C812F-9835-4268-9AFC-57CFAAC16162}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED9C812F-9835-4268-9AFC-57CFAAC16162}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
