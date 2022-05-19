@@ -3,7 +3,7 @@
 /// <summary>
 ///     Represents a packet which requests a handshake with a <see cref="ProtocolListener" />.
 /// </summary>
-[Packet(0xE0)]
+[Packet(0x7FFFFFE0)]
 internal sealed class HandshakeRequestPacket : Packet
 {
     /// <summary>

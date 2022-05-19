@@ -1,6 +1,6 @@
 ﻿namespace TcpDotNet.Protocol.Packets.ClientBound;
 
-[Packet(0xF1)]
+[Packet(0x7FFFFFF1)]
 public sealed class PongPacket : Packet
 {
     /// <summary>

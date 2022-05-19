@@ -5,7 +5,7 @@ namespace TcpDotNet.Protocol.Packets.ClientBound;
 /// <summary>
 ///     Represents a packet which responds to a <see cref="HandshakeRequestPacket" />.
 /// </summary>
-[Packet(0xE1)]
+[Packet(0x7FFFFFE1)]
 internal sealed class HandshakeResponsePacket : Packet
 {
     /// <summary>

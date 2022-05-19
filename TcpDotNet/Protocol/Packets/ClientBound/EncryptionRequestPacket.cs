@@ -5,7 +5,7 @@ namespace TcpDotNet.Protocol.Packets.ClientBound;
 /// <summary>
 ///     Represents a packet which requests encryption from the client.
 /// </summary>
-[Packet(0xE2)]
+[Packet(0x7FFFFFE2)]
 internal sealed class EncryptionRequestPacket : Packet
 {
     /// <summary>

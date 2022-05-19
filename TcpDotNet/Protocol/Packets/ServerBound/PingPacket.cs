@@ -2,7 +2,7 @@
 
 namespace TcpDotNet.Protocol.Packets.ServerBound;
 
-[Packet(0xF0)]
+[Packet(0x7FFFFFF0)]
 public sealed class PingPacket : Packet
 {
     /// <summary>

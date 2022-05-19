@@ -5,7 +5,7 @@ namespace TcpDotNet.Protocol.Packets.ServerBound;
 /// <summary>
 ///     Represents a packet which responds to a <see cref="EncryptionRequestPacket" />.
 /// </summary>
-[Packet(0xE3)]
+[Packet(0x7FFFFFE3)]
 internal sealed class EncryptionResponsePacket : Packet
 {
     /// <summary>
