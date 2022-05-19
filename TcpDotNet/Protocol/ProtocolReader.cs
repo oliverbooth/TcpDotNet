@@ -35,6 +35,20 @@ public sealed class ProtocolReader : BinaryReader
     {
     }
 
+    /// <summary>
+    ///     Reads a <see cref="Guid" /> value from the current stream and advances the current position of the stream by sixteen
+    ///     bytes.
+    /// </summary>
+    /// <returns>A <see cref="Guid" /> value.</returns>
+    /// <exception cref="EndOfStreamException">The end of the stream is reached.</exception>
+    public Guid ReadGuid()
+    {
+        Span<byte> buffer = stackalloc byte[16];
+        int read = Read(buffer);
+        if (read != 16) throw new EndOfStreamException();
+        return new Guid(buffer);
+    }
+
     /// <inheritdoc />
     public override short ReadInt16()
     {
@@ -75,7 +89,7 @@ public sealed class ProtocolReader : BinaryReader
     }
 
     /// <summary>
-    ///     Reads a <see cref="Quaternion" /> value  from the current stream and advances the current position of the stream by
+    ///     Reads a <see cref="Quaternion" /> value from the current stream and advances the current position of the stream by
     ///     sixteen bytes.
     /// </summary>
     /// <returns>A <see cref="Quaternion" /> value read from the current stream.</returns>

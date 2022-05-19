@@ -55,7 +55,7 @@ public sealed class ProtocolWriter : BinaryWriter
     [CLSCompliant(false)]
     public override void Write(ushort value)
     {
-        base.Write((ushort)IPAddress.HostToNetworkOrder((short)value));
+        base.Write((ushort) IPAddress.HostToNetworkOrder((short) value));
     }
 
     /// <inheritdoc />
@@ -70,6 +70,17 @@ public sealed class ProtocolWriter : BinaryWriter
     public override void Write(ulong value)
     {
         base.Write((ulong) IPAddress.HostToNetworkOrder((long) value));
+    }
+
+    /// <summary>
+    ///     Writes a <see cref="Guid" /> value to the current stream and advances the stream position by sixteen bytes.
+    /// </summary>
+    /// <param name="guid">The <see cref="Guid" /> value to write.</param>
+    public void Write(Guid guid)
+    {
+        Span<byte> buffer = stackalloc byte[16];
+        guid.TryWriteBytes(buffer);
+        Write(buffer);
     }
 
     /// <summary>
