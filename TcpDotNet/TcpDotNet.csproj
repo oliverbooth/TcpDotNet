@@ -5,10 +5,45 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>10</LangVersion>
+        <Optimize>true</Optimize>
+        <Authors>Oliver Booth</Authors>
+        <NeutralLanguage>en</NeutralLanguage>
+        <RepositoryUrl>https://github.com/oliverbooth/TcpDotNet</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <Description>A .NET Standard 2.1 networking library with support for AES encryption.</Description>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <PackageTags>dotnet networking encryption tcp</PackageTags>
+        <VersionPrefix>0.1.0</VersionPrefix>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(VersionSuffix)' != '' And '$(BuildNumber)' == ''">
+        <Version>$(VersionPrefix)-$(VersionSuffix)</Version>
+        <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+        <FileVersion>$(VersionPrefix).0</FileVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(VersionSuffix)' != '' And '$(BuildNumber)' != ''">
+        <Version>$(VersionPrefix)-$(VersionSuffix).$(BuildNumber)</Version>
+        <AssemblyVersion>$(VersionPrefix).$(BuildNumber)</AssemblyVersion>
+        <FileVersion>$(VersionPrefix).$(BuildNumber)</FileVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(VersionSuffix)' == ''">
+        <Version>$(VersionPrefix)</Version>
+        <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+        <FileVersion>$(VersionPrefix).0</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="ChilkatDnCore" Version="9.5.0.90"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\LICENSE.md">
+            <Pack>True</Pack>
+            <PackagePath/>
+        </None>
     </ItemGroup>
 
 </Project>
