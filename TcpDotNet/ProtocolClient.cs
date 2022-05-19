@@ -1,5 +1,13 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using TcpDotNet.EventData;
+using TcpDotNet.Protocol;
+using TcpDotNet.Protocol.PacketHandlers;
+using TcpDotNet.Protocol.Packets.ClientBound;
+using TcpDotNet.Protocol.Packets.ServerBound;
+using Socket = System.Net.Sockets.Socket;
+using Task = System.Threading.Tasks.Task;
 
 namespace TcpDotNet;
 
@@ -13,9 +21,16 @@ public sealed class ProtocolClient : BaseClientNode
     /// </summary>
     public ProtocolClient()
     {
-        Aes.GenerateKey();
-        Aes.GenerateIV();
+        RegisterPacketHandler(PacketHandler<HandshakeResponsePacket>.Empty);
+        RegisterPacketHandler(PacketHandler<EncryptionRequestPacket>.Empty);
+        RegisterPacketHandler(PacketHandler<SessionExchangePacket>.Empty);
+        RegisterPacketHandler(new DisconnectPacketHandler());
     }
+
+    /// <summary>
+    ///     Occurs when the client has been disconnected.
+    /// </summary>
+    public event EventHandler<DisconnectedEventArgs>? Disconnected;
 
     /// <summary>
     ///     Establishes a connection to a remote host.
@@ -62,8 +77,56 @@ public sealed class ProtocolClient : BaseClientNode
     public async Task ConnectAsync(EndPoint remoteEP, CancellationToken cancellationToken = default)
     {
         if (remoteEP is null) throw new ArgumentNullException(nameof(remoteEP));
+
+        State = ClientState.Connecting;
         BaseSocket = new Socket(remoteEP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-        await Task.Run(() => BaseSocket.ConnectAsync(remoteEP), cancellationToken);
+        try
+        {
+            await Task.Run(() => BaseSocket.ConnectAsync(remoteEP), cancellationToken);
+        }
+        catch
+        {
+            State = ClientState.None;
+            throw;
+        }
+
         IsConnected = true;
+
+        State = ClientState.Handshaking;
+        var handshakeRequest = new HandshakeRequestPacket(ProtocolVersion);
+        var handshakeResponse =
+            await SendAndReceive<HandshakeRequestPacket, HandshakeResponsePacket>(handshakeRequest, cancellationToken);
+
+        if (handshakeResponse.HandshakeResponse != HandshakeResponse.Success)
+        {
+            Close();
+            IsConnected = false;
+            throw new InvalidOperationException("Handshake failed. " +
+                                                $"Server responded with {handshakeResponse.HandshakeResponse:D}");
+        }
+
+        State = ClientState.Encrypting;
+        var encryptionRequest = await WaitForPacketAsync<EncryptionRequestPacket>(cancellationToken);
+        using var rsa = new RSACryptoServiceProvider(2048);
+        rsa.ImportCspBlob(encryptionRequest.PublicKey);
+        byte[] encryptedPayload = rsa.Encrypt(encryptionRequest.Payload, true);
+
+        var key = new byte[128];
+        using var rng = new RNGCryptoServiceProvider();
+        rng.GetBytes(key);
+ 
+        Aes = CryptographyUtils.GenerateAes(key);
+        var encryptionResponse = new EncryptionResponsePacket(encryptedPayload, rsa.Encrypt(key, true));
+        var sessionPacket = await SendAndReceive<EncryptionResponsePacket, SessionExchangePacket>(encryptionResponse, cancellationToken);
+
+        SessionId = sessionPacket.Session;
+        UseEncryption = true;
+        State = ClientState.Connected;
+    }
+
+    internal void OnDisconnect(DisconnectReason reason)
+    {
+        Disconnected?.Invoke(this, new DisconnectedEventArgs(reason));
+        Close();
     }
 }

@@ -1,7 +1,10 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using TcpDotNet.EventData;
 using TcpDotNet.Protocol;
+using TcpDotNet.Protocol.PacketHandlers;
+using TcpDotNet.Protocol.Packets.ClientBound;
 
 namespace TcpDotNet;
 
@@ -11,6 +14,15 @@ namespace TcpDotNet;
 public sealed partial class ProtocolListener : Node
 {
     private readonly List<Client> _clients = new();
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ProtocolListener" /> class.
+    /// </summary>
+    public ProtocolListener()
+    {
+        RegisterPacketHandler(new HandshakeRequestPacketHandler());
+        RegisterPacketHandler(new EncryptionResponsePacketHandler());
+    }
 
     /// <summary>
     ///     Occurs when a client connects to the listener.
@@ -63,6 +75,12 @@ public sealed partial class ProtocolListener : Node
     public EndPoint LocalEndPoint => BaseSocket.LocalEndPoint;
 
     /// <summary>
+    ///     Gets the RSA provider for this listener.
+    /// </summary>
+    /// <value>The RSA provider.</value>
+    internal RSACryptoServiceProvider Rsa { get; } = new(2048);
+
+    /// <summary>
     ///     Starts the listener on the specified port, using <see cref="IPAddress.Any" /> as the bind address, or
     ///     <see cref="IPAddress.IPv6Any" /> if <see cref="Socket.OSSupportsIPv6" /> is <see langword="true" />. 
     /// </summary>
@@ -98,8 +116,17 @@ public sealed partial class ProtocolListener : Node
         Task.Run(AcceptLoop);
     }
 
-    private void OnClientDisconnect(Client client, DisconnectReason disconnectReason)
+    internal void OnClientConnect(Client client)
     {
+        lock (_clients) _clients.Add(client);
+        ClientConnected?.Invoke(this, new ClientConnectedEventArgs(client));
+    }
+
+    internal void OnClientDisconnect(Client client, DisconnectReason disconnectReason)
+    {
+        var disconnectPacket = new DisconnectPacket(disconnectReason);
+        client.SendPacketAsync(disconnectPacket).GetAwaiter().GetResult();
+        client.Close();
         lock (_clients) _clients.Remove(client);
         ClientDisconnected?.Invoke(this, new ClientDisconnectedEventArgs(client, disconnectReason));
     }
@@ -116,10 +143,7 @@ public sealed partial class ProtocolListener : Node
             Socket socket = await BaseSocket.AcceptAsync();
 
             var client = new Client(this, socket);
-            lock (_clients) _clients.Add(client);
-
             client.Start();
-            ClientConnected?.Invoke(this, new ClientConnectedEventArgs(client));
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Concurrent;
-using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using System.Security.Cryptography;
+using Chilkat;
 using TcpDotNet.Protocol;
+using Stream = System.IO.Stream;
+using Task = System.Threading.Tasks.Task;
 
 namespace TcpDotNet;
 
@@ -14,6 +15,13 @@ namespace TcpDotNet;
 public abstract class BaseClientNode : Node
 {
     private readonly ConcurrentDictionary<int, List<TaskCompletionSource<Packet>>> _packetCompletionSources = new();
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="BaseClientNode" /> class.
+    /// </summary>
+    protected BaseClientNode()
+    {
+    }
 
     /// <summary>
     ///     Gets a value indicating whether the client is connected.
@@ -36,6 +44,11 @@ public abstract class BaseClientNode : Node
     public Guid SessionId { get; internal set; }
 
     /// <summary>
+    ///     Gets the current state of the client.
+    /// </summary>
+    public ClientState State { get; protected internal set; }
+
+    /// <summary>
     ///     Gets or sets a value indicating whether GZip compression is enabled.
     /// </summary>
     /// <value><see langword="true" /> if compression is enabled; otherwise, <see langword="false" />.</value>
@@ -48,10 +61,26 @@ public abstract class BaseClientNode : Node
     internal bool UseEncryption { get; set; } = false;
 
     /// <summary>
-    ///     Gets the AES implementation used by this client.
+    ///     Gets or sets the AES implementation used by this client.
     /// </summary>
     /// <value>The AES implementation.</value>
-    internal Aes Aes { get; } = Aes.Create();
+    internal Crypt2 Aes { get; set; } = CryptographyUtils.GenerateAes(Array.Empty<byte>());
+
+    /// <inheritdoc />
+    public override void Close()
+    {
+        IsConnected = false;
+        State = ClientState.Disconnected;
+        base.Close();
+    }
+
+    /// <inheritdoc />
+    public override void Dispose()
+    {
+        IsConnected = false;
+        State = ClientState.Disconnected;
+        base.Dispose();
+    }
 
     /// <summary>
     ///     Reads the next packet from the client's stream.
@@ -65,10 +94,11 @@ public abstract class BaseClientNode : Node
         int length;
         try
         {
-            length = networkReader.ReadInt32();
+            length = await Task.Run(() => networkReader.ReadInt32(), cancellationToken);
         }
         catch (EndOfStreamException)
         {
+            State = ClientState.Disconnected;
             throw new DisconnectedException();
         }
 
@@ -77,11 +107,18 @@ public abstract class BaseClientNode : Node
         buffer.Write(networkReader.ReadBytes(length));
         buffer.Position = 0;
 
-        if (UseCompression) targetStream = new GZipStream(targetStream, CompressionMode.Decompress);
-        if (UseEncryption) targetStream = new CryptoStream(targetStream, Aes.CreateDecryptor(), CryptoStreamMode.Read);
+        // if (UseCompression) targetStream = new GZipStream(targetStream, CompressionLevel.Optimal);
+        if (UseEncryption)
+        {
+            var data = new byte[targetStream.Length];
+            _ = await targetStream.ReadAsync(data, 0, data.Length, cancellationToken);
+            buffer.SetLength(0);
+            buffer.Write(Aes.DecryptBytes(data));
+            buffer.Position = 0;
+        }
 
         using var bufferReader = new ProtocolReader(targetStream);
-        int packetHeader = bufferReader.ReadInt32();
+        int packetHeader = await Task.Run(() => bufferReader.ReadInt32(), cancellationToken);
 
         if (!RegisteredPackets.TryGetValue(packetHeader, out Type? packetType))
         {
@@ -127,31 +164,41 @@ public abstract class BaseClientNode : Node
         var buffer = new MemoryStream();
         Stream targetStream = buffer;
 
-        if (UseEncryption) targetStream = new CryptoStream(targetStream, Aes.CreateEncryptor(), CryptoStreamMode.Write);
-        if (UseCompression) targetStream = new GZipStream(targetStream, CompressionMode.Compress);
+        // if (UseCompression) targetStream = new GZipStream(targetStream, CompressionMode.Compress);
 
         await using var bufferWriter = new ProtocolWriter(targetStream);
         bufferWriter.Write(packet.Id);
         await packet.SerializeAsync(bufferWriter);
-
-        switch (targetStream)
-        {
-            case CryptoStream cryptoStream:
-                cryptoStream.FlushFinalBlock();
-                break;
-            case GZipStream {BaseStream: CryptoStream baseCryptoStream}:
-                baseCryptoStream.FlushFinalBlock();
-                break;
-        }
-
         await targetStream.FlushAsync(cancellationToken);
         buffer.Position = 0;
 
         await using var networkStream = new NetworkStream(BaseSocket);
         await using var networkWriter = new ProtocolWriter(networkStream);
-        networkWriter.Write((int) buffer.Length);
-        await buffer.CopyToAsync(networkStream, cancellationToken);
-        await networkStream.FlushAsync(cancellationToken);
+
+        if (UseEncryption)
+        {
+            byte[] data = buffer.ToArray();
+            buffer.SetLength(0);
+            buffer.Write(Aes.EncryptBytes(data));
+            buffer.Position = 0;
+        }
+
+        var length = (int) buffer.Length;
+        networkWriter.Write(length);
+
+        try
+        {
+            await buffer.CopyToAsync(networkStream, cancellationToken);
+            await networkStream.FlushAsync(cancellationToken);
+        }
+        catch (IOException)
+        {
+            State = ClientState.Disconnected;
+            IsConnected = false;
+
+            if (this is ProtocolClient client)
+                client.OnDisconnect(DisconnectReason.EndOfStream);
+        }
     }
 
     /// <summary>
@@ -232,13 +279,22 @@ public abstract class BaseClientNode : Node
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                Packet? packet = await ReadNextPacketAsync(cancellationToken);
-                if (packet is TPacket typedPacket)
+                try
                 {
-                    completionSource.TrySetResult(typedPacket);
-                    return;
+                    Packet? packet = await ReadNextPacketAsync(cancellationToken);
+                    if (packet is TPacket typedPacket)
+                    {
+                        completionSource.TrySetResult(typedPacket);
+                        return;
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    completionSource.SetCanceled();
                 }
             }
+
+            completionSource.SetCanceled();
         }, cancellationToken);
 
         var packet = (TPacket) await Task.Run(() => completionSource.Task, cancellationToken);

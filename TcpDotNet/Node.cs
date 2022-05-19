@@ -11,6 +11,11 @@ namespace TcpDotNet;
 /// </summary>
 public abstract class Node : IDisposable
 {
+    /// <summary>
+    ///     The protocol version of this node.
+    /// </summary>
+    public const int ProtocolVersion = 1;
+
     private readonly ConcurrentDictionary<int, Type> _registeredPackets = new();
     private readonly ConcurrentDictionary<Type, List<PacketHandler>> _registeredPacketHandlers = new();
 
@@ -35,8 +40,16 @@ public abstract class Node : IDisposable
         new ReadOnlyDictionary<Type, IReadOnlyCollection<PacketHandler>>(
             _registeredPacketHandlers.ToDictionary(p => p.Key, p => (IReadOnlyCollection<PacketHandler>) p.Value.AsReadOnly()));
 
+    /// <summary>
+    ///     Closes the base socket connection and releases all associated resources.
+    /// </summary>
+    public virtual void Close()
+    {
+        BaseSocket.Close();
+    }
+
     /// <inheritdoc />
-    public void Dispose()
+    public virtual void Dispose()
     {
         BaseSocket.Dispose();
     }

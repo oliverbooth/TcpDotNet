@@ -24,6 +24,11 @@ public sealed partial class ProtocolListener
         /// <value>The parent listener.</value>
         public ProtocolListener ParentListener { get; }
 
+        /// <summary>
+        ///     Gets or sets the client's verification payload.
+        /// </summary>
+        internal byte[] AesVerificationPayload { get; set; } = Array.Empty<byte>();
+
         internal void Start()
         {
             foreach (Type packetType in ParentListener.RegisteredPackets.Values)
@@ -33,6 +38,7 @@ public sealed partial class ProtocolListener
             foreach (PacketHandler handler in handlers)
                 RegisterPacketHandler(packetType, handler);
 
+            State = ClientState.Handshaking;
             Task.Run(ReadLoopAsync);
         }
 

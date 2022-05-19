@@ -13,5 +13,10 @@ public enum DisconnectReason
     /// <summary>
     ///     The client reached an unexpected end of stream.
     /// </summary>
-    EndOfStream
+    EndOfStream,
+
+    /// <summary>
+    ///     The client sent an invalid encryption payload.
+    /// </summary>
+    InvalidEncryptionKey
 }
