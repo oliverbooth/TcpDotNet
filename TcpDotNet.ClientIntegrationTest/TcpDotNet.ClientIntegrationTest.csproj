@@ -11,8 +11,4 @@
       <ProjectReference Include="..\TcpDotNet\TcpDotNet.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="PacketHandlers" />
-    </ItemGroup>
-
 </Project>
