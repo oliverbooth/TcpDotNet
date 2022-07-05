@@ -36,5 +36,5 @@ jobs:
     - name: Push NuGet Package to GitHub
       run: dotnet nuget push "build/*" --source "github" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
 
-    # - name: Push NuGet Package to nuget.org
-    #   run: dotnet nuget push "build/*" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+    - name: Push NuGet Package to nuget.org
+      run: dotnet nuget push "build/*" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
