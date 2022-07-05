@@ -1,4 +1,5 @@
 ﻿using TcpDotNet;
+using TcpDotNet.ListenerIntegrationTest.PacketHandlers;
 using TcpDotNet.Protocol;
 using TcpDotNet.Protocol.Packets.ClientBound;
 using TcpDotNet.Protocol.Packets.ServerBound;
@@ -7,6 +8,7 @@ var listener = new ProtocolListener();
 listener.ClientConnected += (_, e) => Console.WriteLine($"Client connected from {e.Client.RemoteEndPoint} with session {e.Client.SessionId}");
 listener.ClientDisconnected += (_, e) => Console.WriteLine($"Client {e.Client.SessionId} disconnected ({e.DisconnectReason})");
 
+listener.RegisterPacketHandler(new HelloPacketHandler());
 listener.RegisterPacketHandler(new PingPacketHandler());
 listener.Start(1234);
 
