@@ -95,7 +95,7 @@ public sealed class ProtocolClient : BaseClientNode
         State = ClientState.Handshaking;
         var handshakeRequest = new HandshakeRequestPacket(ProtocolVersion);
         var handshakeResponse =
-            await SendAndReceive<HandshakeRequestPacket, HandshakeResponsePacket>(handshakeRequest, cancellationToken);
+            await SendAndReceiveAsync<HandshakeRequestPacket, HandshakeResponsePacket>(handshakeRequest, cancellationToken);
 
         if (handshakeResponse.HandshakeResponse != HandshakeResponse.Success)
         {
@@ -117,7 +117,7 @@ public sealed class ProtocolClient : BaseClientNode
  
         Aes = CryptographyUtils.GenerateAes(key);
         var encryptionResponse = new EncryptionResponsePacket(encryptedPayload, rsa.Encrypt(key, true));
-        var sessionPacket = await SendAndReceive<EncryptionResponsePacket, SessionExchangePacket>(encryptionResponse, cancellationToken);
+        var sessionPacket = await SendAndReceiveAsync<EncryptionResponsePacket, SessionExchangePacket>(encryptionResponse, cancellationToken);
 
         SessionId = sessionPacket.Session;
         UseEncryption = true;

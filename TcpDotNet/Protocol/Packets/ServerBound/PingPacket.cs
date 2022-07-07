@@ -2,8 +2,11 @@
 
 namespace TcpDotNet.Protocol.Packets.ServerBound;
 
+/// <summary>
+///     Represents a packet which performs a heartbeat request.
+/// </summary>
 [Packet(0x7FFFFFF0)]
-public sealed class PingPacket : Packet
+public sealed class PingPacket : RequestPacket
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="PingPacket" /> class.
@@ -22,18 +25,18 @@ public sealed class PingPacket : Packet
     public byte[] Payload { get; private set; }
 
     /// <inheritdoc />
-    protected internal override Task DeserializeAsync(ProtocolReader reader)
+    protected internal override async Task DeserializeAsync(ProtocolReader reader)
     {
+        await base.DeserializeAsync(reader);
         int length = reader.ReadInt32();
         Payload = reader.ReadBytes(length);
-        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    protected internal override Task SerializeAsync(ProtocolWriter writer)
+    protected internal override async Task SerializeAsync(ProtocolWriter writer)
     {
+        await base.SerializeAsync(writer);
         writer.Write(Payload.Length);
         writer.Write(Payload);
-        return Task.CompletedTask;
     }
 }

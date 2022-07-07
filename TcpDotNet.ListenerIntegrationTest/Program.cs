@@ -19,7 +19,7 @@ internal sealed class PingPacketHandler : PacketHandler<PingPacket>
     public override async Task HandleAsync(BaseClientNode recipient, PingPacket packet, CancellationToken cancellationToken = default)
     {
         Console.WriteLine($"Client {recipient.SessionId} sent ping with payload {BitConverter.ToString(packet.Payload)}");
-        var pong = new PongPacket(packet.Payload);
+        var pong = new PongPacket(packet.CallbackId, packet.Payload);
         await recipient.SendPacketAsync(pong, cancellationToken);
     }
 }

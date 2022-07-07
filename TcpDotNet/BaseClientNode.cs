@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Runtime.Serialization;
 using Chilkat;
 using TcpDotNet.Protocol;
 using Stream = System.IO.Stream;
@@ -14,6 +15,7 @@ namespace TcpDotNet;
 /// </summary>
 public abstract class BaseClientNode : Node
 {
+    private readonly ObjectIDGenerator _callbackIdGenerator = new();
     private readonly ConcurrentDictionary<int, List<TaskCompletionSource<Packet>>> _packetCompletionSources = new();
 
     /// <summary>
@@ -212,13 +214,18 @@ public abstract class BaseClientNode : Node
     /// <remarks>
     ///     This method will consume all incoming packets, raising their associated handlers if such packets are recognised.
     /// </remarks>
-    public async Task<TReceive> SendAndReceive<TSend, TReceive>(TSend packetToSend, CancellationToken cancellationToken = default)
+    public async Task<TReceive> SendAndReceiveAsync<TSend, TReceive>(TSend packetToSend,
+        CancellationToken cancellationToken = default)
         where TSend : Packet
         where TReceive : Packet
     {
         var attribute = typeof(TReceive).GetCustomAttribute<PacketAttribute>();
         if (attribute is null)
             throw new ArgumentException($"The packet type {typeof(TReceive).Name} is not a valid packet.");
+
+        var requestPacket = packetToSend as RequestPacket;
+        if (requestPacket is not null)
+            requestPacket.CallbackId = _callbackIdGenerator.GetId(this, out _);
 
         var completionSource = new TaskCompletionSource<Packet>();
         if (!_packetCompletionSources.TryGetValue(attribute.Id, out List<TaskCompletionSource<Packet>>? completionSources))
@@ -234,7 +241,18 @@ public abstract class BaseClientNode : Node
         }
 
         await SendPacketAsync(packetToSend, cancellationToken);
-        return await WaitForPacketAsync<TReceive>(completionSource, cancellationToken);
+        TReceive response;
+        do
+        {
+            response = await WaitForPacketAsync<TReceive>(completionSource, cancellationToken);
+            if (requestPacket is null)
+                break;
+
+            if (response is ResponsePacket responsePacket && responsePacket.CallbackId == requestPacket.CallbackId)
+                break;
+        } while (true);
+
+        return response;
     }
 
     /// <summary>
