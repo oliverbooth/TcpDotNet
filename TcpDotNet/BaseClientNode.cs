@@ -225,7 +225,7 @@ public abstract class BaseClientNode : Node
 
         var requestPacket = packetToSend as RequestPacket;
         if (requestPacket is not null)
-            requestPacket.CallbackId = _callbackIdGenerator.GetId(this, out _);
+            requestPacket.CallbackId = _callbackIdGenerator.GetId(packetToSend, out _);
 
         var completionSource = new TaskCompletionSource<Packet>();
         if (!_packetCompletionSources.TryGetValue(attribute.Id, out List<TaskCompletionSource<Packet>>? completionSources))
