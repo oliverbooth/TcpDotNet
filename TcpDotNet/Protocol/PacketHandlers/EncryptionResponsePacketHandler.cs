@@ -32,10 +32,9 @@ internal sealed class EncryptionResponsePacketHandler : PacketHandler<Encryption
         client.Aes = CryptographyUtils.GenerateAes(key);
         client.State = ClientState.Connected;
         client.ParentListener.OnClientConnect(client);
+        client.UseEncryption = true;
 
         var sessionPacket = new SessionExchangePacket(client.SessionId);
         await client.SendPacketAsync(sessionPacket, cancellationToken);
-
-        client.UseEncryption = true;
     }
 }
