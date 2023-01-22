@@ -41,26 +41,22 @@ internal sealed class EncryptionRequestPacket : Packet
     public byte[] PublicKey { get; private set; }
 
     /// <inheritdoc />
-    protected internal override Task DeserializeAsync(ProtocolReader reader)
+    protected internal override void Deserialize(ProtocolReader reader)
     {
         int length = reader.ReadInt32();
         PublicKey = reader.ReadBytes(length);
 
         length = reader.ReadInt32();
         Payload = reader.ReadBytes(length);
-
-        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    protected internal override Task SerializeAsync(ProtocolWriter writer)
+    protected internal override void Serialize(ProtocolWriter writer)
     {
         writer.Write(PublicKey.Length);
         writer.Write(PublicKey);
 
         writer.Write(Payload.Length);
         writer.Write(Payload);
-
-        return Task.CompletedTask;
     }
 }

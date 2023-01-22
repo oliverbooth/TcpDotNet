@@ -22,16 +22,14 @@ internal sealed class DisconnectPacket : Packet
     public DisconnectReason Reason { get; private set; }
 
     /// <inheritdoc />
-    protected internal override Task DeserializeAsync(ProtocolReader reader)
+    protected internal override void Deserialize(ProtocolReader reader)
     {
         Reason = (DisconnectReason) reader.ReadByte();
-        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    protected internal override Task SerializeAsync(ProtocolWriter writer)
+    protected internal override void Serialize(ProtocolWriter writer)
     {
         writer.Write((byte) Reason);
-        return Task.CompletedTask;
     }
 }

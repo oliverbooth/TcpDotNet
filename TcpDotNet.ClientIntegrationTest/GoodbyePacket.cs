@@ -7,15 +7,13 @@ internal sealed class GoodbyePacket : Packet
 {
     public string Message { get; set; }
 
-    protected override Task DeserializeAsync(ProtocolReader reader)
+    protected override void Deserialize(ProtocolReader reader)
     {
         Message = reader.ReadString();
-        return Task.CompletedTask;
     }
 
-    protected override Task SerializeAsync(ProtocolWriter writer)
+    protected override void Serialize(ProtocolWriter writer)
     {
         writer.Write(Message);
-        return Task.CompletedTask;
     }
 }

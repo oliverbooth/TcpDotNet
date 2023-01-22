@@ -25,17 +25,17 @@ public sealed class PingPacket : RequestPacket
     public byte[] Payload { get; private set; }
 
     /// <inheritdoc />
-    protected internal override async Task DeserializeAsync(ProtocolReader reader)
+    protected internal override void Deserialize(ProtocolReader reader)
     {
-        await base.DeserializeAsync(reader);
+        base.Deserialize(reader);
         int length = reader.ReadInt32();
         Payload = reader.ReadBytes(length);
     }
 
     /// <inheritdoc />
-    protected internal override async Task SerializeAsync(ProtocolWriter writer)
+    protected internal override void Serialize(ProtocolWriter writer)
     {
-        await base.SerializeAsync(writer);
+        base.Serialize(writer);
         writer.Write(Payload.Length);
         writer.Write(Payload);
     }

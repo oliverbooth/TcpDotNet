@@ -96,7 +96,7 @@ public abstract class BaseClientNode : Node
         int length;
         try
         {
-            length = await Task.Run(() => networkReader.ReadInt32(), cancellationToken);
+            length = await Task.Run(networkReader.ReadInt32, cancellationToken);
         }
         catch (EndOfStreamException)
         {
@@ -136,7 +136,7 @@ public abstract class BaseClientNode : Node
             return null;
 
         var packet = (Packet) constructor.Invoke(null);
-        await packet.DeserializeAsync(bufferReader);
+        packet.Deserialize(bufferReader);
         await targetStream.DisposeAsync();
 
         if (RegisteredPacketHandlers.TryGetValue(packetType, out IReadOnlyCollection<PacketHandler>? handlers))
@@ -170,7 +170,7 @@ public abstract class BaseClientNode : Node
 
         await using var bufferWriter = new ProtocolWriter(targetStream);
         bufferWriter.Write(packet.Id);
-        await packet.SerializeAsync(bufferWriter);
+        packet.Serialize(bufferWriter);
         await targetStream.FlushAsync(cancellationToken);
         buffer.Position = 0;
 
