@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace TcpDotNet.Protocol;
@@ -33,73 +34,6 @@ public sealed class ProtocolReader : BinaryReader
     /// </exception>
     public ProtocolReader(Stream input, bool leaveOpen) : base(input, Encoding.UTF8, leaveOpen)
     {
-    }
-
-    /// <summary>
-    ///     Reads a <see cref="Guid" /> value from the current stream and advances the current position of the stream by sixteen
-    ///     bytes.
-    /// </summary>
-    /// <returns>A <see cref="Guid" /> value.</returns>
-    /// <exception cref="EndOfStreamException">The end of the stream is reached.</exception>
-    public Guid ReadGuid()
-    {
-        Span<byte> buffer = stackalloc byte[16];
-        int read = Read(buffer);
-        if (read != 16) throw new EndOfStreamException();
-        return new Guid(buffer);
-    }
-
-    /// <inheritdoc />
-    public override short ReadInt16()
-    {
-        return IPAddress.NetworkToHostOrder(base.ReadInt16());
-    }
-
-    /// <inheritdoc />
-    public override int ReadInt32()
-    {
-        return IPAddress.NetworkToHostOrder(base.ReadInt32());
-    }
-
-    /// <inheritdoc />
-    public override long ReadInt64()
-    {
-        return IPAddress.NetworkToHostOrder(base.ReadInt64());
-    }
-
-    /// <inheritdoc />
-    [CLSCompliant(false)]
-    public override ushort ReadUInt16()
-    {
-        return (ushort) IPAddress.NetworkToHostOrder((short) base.ReadUInt16());
-    }
-
-    /// <inheritdoc />
-    [CLSCompliant(false)]
-    public override uint ReadUInt32()
-    {
-        return (uint) IPAddress.NetworkToHostOrder((int) base.ReadUInt32());
-    }
-
-    /// <inheritdoc />
-    [CLSCompliant(false)]
-    public override ulong ReadUInt64()
-    {
-        return (ulong) IPAddress.NetworkToHostOrder((long) base.ReadUInt64());
-    }
-
-    /// <summary>
-    ///     Reads a <see cref="Quaternion" /> value from the current stream and advances the current position of the stream by
-    ///     sixteen bytes.
-    /// </summary>
-    /// <returns>A <see cref="Quaternion" /> value read from the current stream.</returns>
-    public Quaternion ReadQuaternion()
-    {
-        float x = ReadSingle();
-        float y = ReadSingle();
-        float z = ReadSingle();
-        float w = ReadSingle();
-        return new Quaternion(x, y, z, w);
     }
 
     /// <summary>
@@ -186,6 +120,97 @@ public sealed class ProtocolReader : BinaryReader
 
         result |= (ulong) byteReadJustNow << (maxBytesWithoutOverflow * 7);
         return (long) result;
+    }
+
+    /// <inheritdoc />
+    public override double ReadDouble()
+    {
+        Span<byte> buffer = stackalloc byte[8];
+        int read = Read(buffer);
+        if (read != buffer.Length) throw new EndOfStreamException();
+
+        if (BitConverter.IsLittleEndian) buffer.Reverse();
+        MemoryMarshal.TryRead(buffer, out double value);
+        return value;
+    }
+
+    /// <summary>
+    ///     Reads a <see cref="Guid" /> value from the current stream and advances the current position of the stream by sixteen
+    ///     bytes.
+    /// </summary>
+    /// <returns>A <see cref="Guid" /> value.</returns>
+    /// <exception cref="EndOfStreamException">The end of the stream is reached.</exception>
+    public Guid ReadGuid()
+    {
+        Span<byte> buffer = stackalloc byte[16];
+        int read = Read(buffer);
+        if (read != 16) throw new EndOfStreamException();
+        return new Guid(buffer);
+    }
+
+    /// <inheritdoc />
+    public override short ReadInt16()
+    {
+        return IPAddress.NetworkToHostOrder(base.ReadInt16());
+    }
+
+    /// <inheritdoc />
+    public override int ReadInt32()
+    {
+        return IPAddress.NetworkToHostOrder(base.ReadInt32());
+    }
+
+    /// <inheritdoc />
+    public override long ReadInt64()
+    {
+        return IPAddress.NetworkToHostOrder(base.ReadInt64());
+    }
+
+    /// <summary>
+    ///     Reads a <see cref="Quaternion" /> value from the current stream and advances the current position of the stream by
+    ///     sixteen bytes.
+    /// </summary>
+    /// <returns>A <see cref="Quaternion" /> value read from the current stream.</returns>
+    public Quaternion ReadQuaternion()
+    {
+        float x = ReadSingle();
+        float y = ReadSingle();
+        float z = ReadSingle();
+        float w = ReadSingle();
+        return new Quaternion(x, y, z, w);
+    }
+
+    /// <inheritdoc />
+    public override float ReadSingle()
+    {
+        Span<byte> buffer = stackalloc byte[4];
+        int read = Read(buffer);
+        if (read != buffer.Length) throw new EndOfStreamException();
+
+        if (BitConverter.IsLittleEndian) buffer.Reverse();
+        MemoryMarshal.TryRead(buffer, out float value);
+        return value;
+    }
+
+    /// <inheritdoc />
+    [CLSCompliant(false)]
+    public override ushort ReadUInt16()
+    {
+        return (ushort) IPAddress.NetworkToHostOrder((short) base.ReadUInt16());
+    }
+
+    /// <inheritdoc />
+    [CLSCompliant(false)]
+    public override uint ReadUInt32()
+    {
+        return (uint) IPAddress.NetworkToHostOrder((int) base.ReadUInt32());
+    }
+
+    /// <inheritdoc />
+    [CLSCompliant(false)]
+    public override ulong ReadUInt64()
+    {
+        return (ulong) IPAddress.NetworkToHostOrder((long) base.ReadUInt64());
     }
 
     /// <summary>
