@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -96,7 +96,7 @@ public abstract class BaseClientNode : Node
         int length;
         try
         {
-            length = await Task.Factory.StartNew(networkReader.ReadInt32, cancellationToken);
+            length = networkReader.ReadInt32();
         }
         catch (EndOfStreamException)
         {
@@ -123,7 +123,7 @@ public abstract class BaseClientNode : Node
         int packetHeader;
         try
         {
-            packetHeader = await Task.Factory.StartNew(bufferReader.ReadInt32, cancellationToken);
+            packetHeader = bufferReader.ReadInt32();
         }
         catch (EndOfStreamException)
         {
