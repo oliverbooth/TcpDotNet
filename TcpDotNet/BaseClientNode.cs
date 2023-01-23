@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -96,7 +96,7 @@ public abstract class BaseClientNode : Node
         int length;
         try
         {
-            length = await Task.Run(networkReader.ReadInt32, cancellationToken);
+            length = await Task.Factory.StartNew(networkReader.ReadInt32, cancellationToken);
         }
         catch (EndOfStreamException)
         {
@@ -120,7 +120,16 @@ public abstract class BaseClientNode : Node
         }
 
         using var bufferReader = new ProtocolReader(targetStream);
-        int packetHeader = await Task.Run(() => bufferReader.ReadInt32(), cancellationToken);
+        int packetHeader;
+        try
+        {
+            packetHeader = await Task.Factory.StartNew(bufferReader.ReadInt32, cancellationToken);
+        }
+        catch (EndOfStreamException)
+        {
+            State = ClientState.Disconnected;
+            throw;
+        }
 
         if (!RegisteredPackets.TryGetValue(packetHeader, out Type? packetType))
         {
