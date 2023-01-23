@@ -17,6 +17,7 @@ public abstract class BaseClientNode : Node
 {
     private readonly ObjectIDGenerator _callbackIdGenerator = new();
     private readonly ConcurrentDictionary<int, List<TaskCompletionSource<Packet>>> _packetCompletionSources = new();
+    private EndPoint? _remoteEP;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BaseClientNode" /> class.
@@ -36,8 +37,11 @@ public abstract class BaseClientNode : Node
     /// </summary>
     /// <value>The <see cref="EndPoint" /> with which the client is communicating.</value>
     /// <exception cref="SocketException">An error occurred when attempting to access the socket.</exception>
-    /// <exception cref="ObjectDisposedException"><see cref="Node.BaseSocket" /> has been closed.</exception>
-    public EndPoint RemoteEndPoint => BaseSocket.RemoteEndPoint;
+    public EndPoint RemoteEndPoint
+    {
+        get => _remoteEP ??= BaseSocket.RemoteEndPoint;
+        internal set => _remoteEP = value;
+    }
 
     /// <summary>
     ///     Gets the session ID of the client.
