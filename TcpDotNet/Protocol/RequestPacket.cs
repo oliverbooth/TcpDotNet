@@ -12,16 +12,14 @@ public abstract class RequestPacket : Packet
     public long CallbackId { get; internal set; }
 
     /// <inheritdoc />
-    protected internal override Task DeserializeAsync(ProtocolReader reader)
+    protected internal override void Deserialize(ProtocolReader reader)
     {
         CallbackId = reader.ReadInt64();
-        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    protected internal override Task SerializeAsync(ProtocolWriter writer)
+    protected internal override void Serialize(ProtocolWriter writer)
     {
         writer.Write(CallbackId);
-        return Task.CompletedTask;
     }
 }

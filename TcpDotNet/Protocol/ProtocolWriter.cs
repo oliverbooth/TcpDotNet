@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace TcpDotNet.Protocol;
@@ -34,6 +35,27 @@ public sealed class ProtocolWriter : BinaryWriter
     }
 
     /// <inheritdoc />
+    public override void Write(double value)
+    {
+        Span<byte> buffer = stackalloc byte[8];
+        MemoryMarshal.TryWrite(buffer, ref value);
+
+        if (BitConverter.IsLittleEndian) buffer.Reverse();
+        Write(buffer);
+    }
+
+    /// <summary>
+    ///     Writes a <see cref="Guid" /> value to the current stream and advances the stream position by sixteen bytes.
+    /// </summary>
+    /// <param name="guid">The <see cref="Guid" /> value to write.</param>
+    public void Write(Guid guid)
+    {
+        Span<byte> buffer = stackalloc byte[16];
+        guid.TryWriteBytes(buffer);
+        Write(buffer);
+    }
+
+    /// <inheritdoc />
     public override void Write(short value)
     {
         base.Write(IPAddress.HostToNetworkOrder(value));
@@ -49,6 +71,28 @@ public sealed class ProtocolWriter : BinaryWriter
     public override void Write(long value)
     {
         base.Write(IPAddress.HostToNetworkOrder(value));
+    }
+
+    /// <summary>
+    ///     Writes a <see cref="Quaternion" /> value to the current stream and advances the stream position by sixteen bytes.
+    /// </summary>
+    /// <param name="value">The <see cref="Quaternion" /> value to write.</param>
+    public void Write(Quaternion value)
+    {
+        Write(value.X);
+        Write(value.Y);
+        Write(value.Z);
+        Write(value.W);
+    }
+
+    /// <inheritdoc />
+    public override void Write(float value)
+    {
+        Span<byte> buffer = stackalloc byte[4];
+        MemoryMarshal.TryWrite(buffer, ref value);
+
+        if (BitConverter.IsLittleEndian) buffer.Reverse();
+        Write(buffer);
     }
 
     /// <inheritdoc />
@@ -70,29 +114,6 @@ public sealed class ProtocolWriter : BinaryWriter
     public override void Write(ulong value)
     {
         base.Write((ulong) IPAddress.HostToNetworkOrder((long) value));
-    }
-
-    /// <summary>
-    ///     Writes a <see cref="Guid" /> value to the current stream and advances the stream position by sixteen bytes.
-    /// </summary>
-    /// <param name="guid">The <see cref="Guid" /> value to write.</param>
-    public void Write(Guid guid)
-    {
-        Span<byte> buffer = stackalloc byte[16];
-        guid.TryWriteBytes(buffer);
-        Write(buffer);
-    }
-
-    /// <summary>
-    ///     Writes a <see cref="Quaternion" /> value to the current stream and advances the stream position by sixteen bytes.
-    /// </summary>
-    /// <param name="value">The <see cref="Quaternion" /> value to write.</param>
-    public void Write(Quaternion value)
-    {
-        Write(value.X);
-        Write(value.Y);
-        Write(value.Z);
-        Write(value.W);
     }
 
     /// <summary>

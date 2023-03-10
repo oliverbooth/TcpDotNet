@@ -41,26 +41,22 @@ internal sealed class EncryptionResponsePacket : Packet
 
 
     /// <inheritdoc />
-    protected internal override Task DeserializeAsync(ProtocolReader reader)
+    protected internal override void Deserialize(ProtocolReader reader)
     {
         int length = reader.ReadInt32();
         SharedSecret = reader.ReadBytes(length);
 
         length = reader.ReadInt32();
         Payload = reader.ReadBytes(length);
-
-        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    protected internal override Task SerializeAsync(ProtocolWriter writer)
+    protected internal override void Serialize(ProtocolWriter writer)
     {
         writer.Write(SharedSecret.Length);
         writer.Write(SharedSecret);
 
         writer.Write(Payload.Length);
         writer.Write(Payload);
-
-        return Task.CompletedTask;
     }
 }

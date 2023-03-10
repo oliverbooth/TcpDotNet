@@ -91,6 +91,7 @@ public sealed class ProtocolClient : BaseClientNode
         }
 
         IsConnected = true;
+        RemoteEndPoint = BaseSocket.RemoteEndPoint;
 
         State = ClientState.Handshaking;
         var handshakeRequest = new HandshakeRequestPacket(ProtocolVersion);
@@ -114,13 +115,16 @@ public sealed class ProtocolClient : BaseClientNode
         var key = new byte[128];
         using var rng = new RNGCryptoServiceProvider();
         rng.GetBytes(key);
- 
+
         Aes = CryptographyUtils.GenerateAes(key);
-        var encryptionResponse = new EncryptionResponsePacket(encryptedPayload, rsa.Encrypt(key, true));
-        var sessionPacket = await SendAndReceiveAsync<EncryptionResponsePacket, SessionExchangePacket>(encryptionResponse, cancellationToken);
+        byte[] aesKey = rsa.Encrypt(key, true);
+        var encryptionResponse = new EncryptionResponsePacket(encryptedPayload, aesKey);
+        await SendPacketAsync(encryptionResponse, cancellationToken);
+
+        UseEncryption = true;
+        var sessionPacket = await WaitForPacketAsync<SessionExchangePacket>(cancellationToken);
 
         SessionId = sessionPacket.Session;
-        UseEncryption = true;
         State = ClientState.Connected;
     }
 

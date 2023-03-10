@@ -29,11 +29,11 @@ public abstract class Packet
     ///     Deserializes this packet from the specified reader.
     /// </summary>
     /// <param name="reader">The reader from which this packet should be deserialized.</param>
-    protected internal abstract Task DeserializeAsync(ProtocolReader reader);
+    protected internal abstract void Deserialize(ProtocolReader reader);
 
     /// <summary>
     ///     Serializes this packet to the specified writer.
     /// </summary>
     /// <param name="writer">The writer to which this packet should be serialized.</param>
-    protected internal abstract Task SerializeAsync(ProtocolWriter writer);
+    protected internal abstract void Serialize(ProtocolWriter writer);
 }

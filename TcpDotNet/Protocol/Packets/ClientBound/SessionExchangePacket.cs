@@ -24,16 +24,14 @@ internal sealed class SessionExchangePacket : Packet
     public Guid Session { get; private set; }
 
     /// <inheritdoc />
-    protected internal override Task DeserializeAsync(ProtocolReader reader)
+    protected internal override void Deserialize(ProtocolReader reader)
     {
         Session = reader.ReadGuid();
-        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    protected internal override Task SerializeAsync(ProtocolWriter writer)
+    protected internal override void Serialize(ProtocolWriter writer)
     {
         writer.Write(Session);
-        return Task.CompletedTask;
     }
 }

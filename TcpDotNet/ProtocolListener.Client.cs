@@ -16,6 +16,7 @@ public sealed partial class ProtocolListener
             BaseSocket = socket ?? throw new ArgumentNullException(nameof(socket));
             SessionId = Guid.NewGuid();
             IsConnected = true;
+            RemoteEndPoint = socket.RemoteEndPoint;
         }
 
         /// <summary>

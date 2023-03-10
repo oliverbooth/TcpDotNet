@@ -17,6 +17,7 @@ public abstract class BaseClientNode : Node
 {
     private readonly ObjectIDGenerator _callbackIdGenerator = new();
     private readonly ConcurrentDictionary<int, List<TaskCompletionSource<Packet>>> _packetCompletionSources = new();
+    private EndPoint? _remoteEP;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BaseClientNode" /> class.
@@ -36,8 +37,11 @@ public abstract class BaseClientNode : Node
     /// </summary>
     /// <value>The <see cref="EndPoint" /> with which the client is communicating.</value>
     /// <exception cref="SocketException">An error occurred when attempting to access the socket.</exception>
-    /// <exception cref="ObjectDisposedException"><see cref="Node.BaseSocket" /> has been closed.</exception>
-    public EndPoint RemoteEndPoint => BaseSocket.RemoteEndPoint;
+    public EndPoint RemoteEndPoint
+    {
+        get => _remoteEP ??= BaseSocket.RemoteEndPoint;
+        internal set => _remoteEP = value;
+    }
 
     /// <summary>
     ///     Gets the session ID of the client.
@@ -96,7 +100,7 @@ public abstract class BaseClientNode : Node
         int length;
         try
         {
-            length = await Task.Run(() => networkReader.ReadInt32(), cancellationToken);
+            length = networkReader.ReadInt32();
         }
         catch (EndOfStreamException)
         {
@@ -120,7 +124,16 @@ public abstract class BaseClientNode : Node
         }
 
         using var bufferReader = new ProtocolReader(targetStream);
-        int packetHeader = await Task.Run(() => bufferReader.ReadInt32(), cancellationToken);
+        int packetHeader;
+        try
+        {
+            packetHeader = bufferReader.ReadInt32();
+        }
+        catch (EndOfStreamException)
+        {
+            State = ClientState.Disconnected;
+            throw;
+        }
 
         if (!RegisteredPackets.TryGetValue(packetHeader, out Type? packetType))
         {
@@ -136,7 +149,7 @@ public abstract class BaseClientNode : Node
             return null;
 
         var packet = (Packet) constructor.Invoke(null);
-        await packet.DeserializeAsync(bufferReader);
+        packet.Deserialize(bufferReader);
         await targetStream.DisposeAsync();
 
         if (RegisteredPacketHandlers.TryGetValue(packetType, out IReadOnlyCollection<PacketHandler>? handlers))
@@ -170,7 +183,7 @@ public abstract class BaseClientNode : Node
 
         await using var bufferWriter = new ProtocolWriter(targetStream);
         bufferWriter.Write(packet.Id);
-        await packet.SerializeAsync(bufferWriter);
+        packet.Serialize(bufferWriter);
         await targetStream.FlushAsync(cancellationToken);
         buffer.Position = 0;
 
