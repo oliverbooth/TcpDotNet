@@ -101,8 +101,9 @@ public sealed class ProtocolClient : ClientNode
         {
             Close();
             IsConnected = false;
-            throw new InvalidOperationException("Handshake failed. " +
-                                                $"Server responded with {handshakeResponse.HandshakeResponse:D}");
+
+            var message = $"Handshake failed. Server responded with {handshakeResponse.HandshakeResponse:D}";
+            throw new InvalidOperationException(message);
         }
 
         State = ClientState.Encrypting;
