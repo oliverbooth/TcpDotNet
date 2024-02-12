@@ -12,6 +12,7 @@
         <RepositoryType>git</RepositoryType>
         <Description>A TCP library for .NET with support for AES encryption.</Description>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <PackageIcon>branding_Icon.png</PackageIcon>
         <PackageTags>dotnet networking encryption tcp</PackageTags>
         <VersionPrefix>0.1.0</VersionPrefix>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -40,7 +41,15 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="..\branding_Icon.png">
+            <Pack>True</Pack>
+            <PackagePath/>
+        </None>
         <None Include="..\LICENSE.md">
+            <Pack>True</Pack>
+            <PackagePath/>
+        </None>
+        <None Include="..\README.md">
             <Pack>True</Pack>
             <PackagePath/>
         </None>

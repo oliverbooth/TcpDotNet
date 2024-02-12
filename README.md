@@ -1,4 +1,4 @@
-<h1 align="center">TcpDotNet</h1>
+<h1 align="center"><img src="branding_Banner.png" alt="TCP.NET"></h1>
 <p align="center">
 <a href="https://github.com/oliverbooth/TcpDotNet/actions/workflows/dotnet.yml"><img src="https://img.shields.io/github/actions/workflow/status/oliverbooth/TcpDotNet/dotnet.yml?branch=main&style=flat-square" alt="GitHub Workflow Status" title="GitHub Workflow Status"></a>
 <a href="https://github.com/oliverbooth/TcpDotNet/issues"><img src="https://img.shields.io/github/issues/oliverbooth/TcpDotNet?style=flat-square" alt="GitHub Issues" title="GitHub Issues"></a>
