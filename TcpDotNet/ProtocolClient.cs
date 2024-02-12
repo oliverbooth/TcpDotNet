@@ -14,7 +14,7 @@ namespace TcpDotNet;
 /// <summary>
 ///     Represents a client on the TcpDotNet protocol.
 /// </summary>
-public sealed class ProtocolClient : BaseClientNode
+public sealed class ProtocolClient : ClientNode
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProtocolClient" /> class.

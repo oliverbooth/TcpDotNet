@@ -8,7 +8,7 @@ public sealed partial class ProtocolListener
     /// <summary>
     ///     Represents a client that is connected to a <see cref="ProtocolListener" />.
     /// </summary>
-    public sealed class Client : BaseClientNode
+    public sealed class Client : ClientNode
     {
         internal Client(ProtocolListener listener, Socket socket)
         {

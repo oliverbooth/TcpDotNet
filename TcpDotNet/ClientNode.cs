@@ -13,16 +13,16 @@ namespace TcpDotNet;
 /// <summary>
 ///     Represents a client node.
 /// </summary>
-public abstract class BaseClientNode : Node
+public abstract class ClientNode : Node
 {
     private readonly ObjectIDGenerator _callbackIdGenerator = new();
     private readonly ConcurrentDictionary<int, List<TaskCompletionSource<Packet>>> _packetCompletionSources = new();
     private EndPoint? _remoteEP;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="BaseClientNode" /> class.
+    ///     Initializes a new instance of the <see cref="ClientNode" /> class.
     /// </summary>
-    protected BaseClientNode()
+    protected ClientNode()
     {
     }
 

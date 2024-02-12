@@ -10,7 +10,7 @@ internal sealed class HandshakeRequestPacketHandler : PacketHandler<HandshakeReq
 {
     /// <inheritdoc />
     public override async Task HandleAsync(
-        BaseClientNode recipient,
+        ClientNode recipient,
         HandshakeRequestPacket packet,
         CancellationToken cancellationToken = default
     )

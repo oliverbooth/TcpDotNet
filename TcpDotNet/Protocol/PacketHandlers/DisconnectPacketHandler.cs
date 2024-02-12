@@ -6,7 +6,7 @@ internal sealed class DisconnectPacketHandler : PacketHandler<DisconnectPacket>
 {
     /// <inheritdoc />
     public override Task HandleAsync(
-        BaseClientNode recipient,
+        ClientNode recipient,
         DisconnectPacket packet,
         CancellationToken cancellationToken = default
     )

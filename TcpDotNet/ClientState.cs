@@ -1,7 +1,7 @@
 ﻿namespace TcpDotNet;
 
 /// <summary>
-///     An enumeration of states for a <see cref="BaseClientNode" /> to be in.
+///     An enumeration of states for a <see cref="ClientNode" /> to be in.
 /// </summary>
 public enum ClientState
 {
