@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,7 +38,11 @@ public sealed class ProtocolWriter : BinaryWriter
     public override void Write(double value)
     {
         Span<byte> buffer = stackalloc byte[8];
+#if NET8_0_OR_GREATER
+        MemoryMarshal.TryWrite(buffer, in value);
+#else
         MemoryMarshal.TryWrite(buffer, ref value);
+#endif
 
         if (BitConverter.IsLittleEndian) buffer.Reverse();
         Write(buffer);
@@ -89,7 +93,11 @@ public sealed class ProtocolWriter : BinaryWriter
     public override void Write(float value)
     {
         Span<byte> buffer = stackalloc byte[4];
+#if NET8_0_OR_GREATER
+        MemoryMarshal.TryWrite(buffer, in value);
+#else
         MemoryMarshal.TryWrite(buffer, ref value);
+#endif
 
         if (BitConverter.IsLittleEndian) buffer.Reverse();
         Write(buffer);
