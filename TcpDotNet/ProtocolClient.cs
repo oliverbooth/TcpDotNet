@@ -82,7 +82,7 @@ public sealed class ProtocolClient : ClientNode
         BaseSocket = new Socket(remoteEP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         try
         {
-            await Task.Run(() => BaseSocket.ConnectAsync(remoteEP), cancellationToken);
+            await Task.Run(() => BaseSocket.ConnectAsync(remoteEP, cancellationToken), cancellationToken);
         }
         catch
         {
