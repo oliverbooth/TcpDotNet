@@ -113,8 +113,7 @@ public sealed class ProtocolClient : ClientNode
         byte[] encryptedPayload = rsa.Encrypt(encryptionRequest.Payload, true);
 
         var key = new byte[128];
-        using var rng = new RNGCryptoServiceProvider();
-        rng.GetBytes(key);
+        RandomNumberGenerator.Fill(key);
 
         Aes = CryptographyUtils.GenerateAes(key);
         byte[] aesKey = rsa.Encrypt(key, true);
