@@ -1,11 +1,11 @@
 <h1 align="center">TcpDotNet</h1>
 <p align="center">
-<a href="https://github.com/oliverbooth/TcpDotNet/actions/workflows/dotnet.yml"><img src="https://img.shields.io/github/actions/workflow/status/oliverbooth/TcpDotNet/dotnet.yml?branch=main" alt="GitHub Workflow Status" title="GitHub Workflow Status"></a>
-<a href="https://github.com/oliverbooth/TcpDotNet/issues"><img src="https://img.shields.io/github/issues/oliverbooth/TcpDotNet" alt="GitHub Issues" title="GitHub Issues"></a>
-<a href="https://www.nuget.org/packages/TcpDotNet/"><img src="https://img.shields.io/nuget/dt/TcpDotNet" alt="NuGet Downloads" title="NuGet Downloads"></a>
-<a href="https://www.nuget.org/packages/TcpDotNet/"><img src="https://img.shields.io/nuget/v/TcpDotNet?label=stable" alt="Stable Version" title="Stable Version"></a>
-<a href="https://www.nuget.org/packages/TcpDotNet/"><img src="https://img.shields.io/nuget/vpre/TcpDotNet?label=nightly" alt="Nightly Version" title="Nightly Version"></a>
-<a href="https://github.com/oliverbooth/TcpDotNet/blob/master/LICENSE.md"><img src="https://img.shields.io/github/license/oliverbooth/TcpDotNet" alt="MIT License" title="MIT License"></a>
+<a href="https://github.com/oliverbooth/TcpDotNet/actions/workflows/dotnet.yml"><img src="https://img.shields.io/github/actions/workflow/status/oliverbooth/TcpDotNet/dotnet.yml?branch=main&style=flat-square" alt="GitHub Workflow Status" title="GitHub Workflow Status"></a>
+<a href="https://github.com/oliverbooth/TcpDotNet/issues"><img src="https://img.shields.io/github/issues/oliverbooth/TcpDotNet?style=flat-square" alt="GitHub Issues" title="GitHub Issues"></a>
+<a href="https://www.nuget.org/packages/TcpDotNet/"><img src="https://img.shields.io/nuget/dt/TcpDotNet?style=flat-square" alt="NuGet Downloads" title="NuGet Downloads"></a>
+<a href="https://www.nuget.org/packages/TcpDotNet/"><img src="https://img.shields.io/nuget/v/TcpDotNet?label=stable&style=flat-square" alt="Stable Version" title="Stable Version"></a>
+<a href="https://www.nuget.org/packages/TcpDotNet/"><img src="https://img.shields.io/nuget/vpre/TcpDotNet?label=nightly&style=flat-square" alt="Nightly Version" title="Nightly Version"></a>
+<a href="https://github.com/oliverbooth/TcpDotNet/blob/master/LICENSE.md"><img src="https://img.shields.io/github/license/oliverbooth/TcpDotNet?style=flat-square" alt="MIT License" title="MIT License"></a>
 </p>
 
 ### About
