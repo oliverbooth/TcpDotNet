@@ -6,6 +6,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpDotNet.ListenerIntegrati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpDotNet.ClientIntegrationTest", "TcpDotNet.ClientIntegrationTest\TcpDotNet.ClientIntegrationTest.csproj", "{ED9C812F-9835-4268-9AFC-57CFAAC16162}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D55FB87A-1066-489D-B0CC-F2C09B611751}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{0FAB77D5-AAE4-4722-A5F4-88A239858D65}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		.github\workflows\nightly.yml = .github\workflows\nightly.yml
+		.github\workflows\prerelease.yml = .github\workflows\prerelease.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
