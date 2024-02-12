@@ -1,4 +1,4 @@
-﻿using TcpDotNet.Protocol;
+using TcpDotNet.Protocol;
 
 namespace TcpDotNet.ListenerIntegrationTest.PacketHandlers;
 

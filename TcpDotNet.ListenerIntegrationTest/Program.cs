@@ -1,4 +1,4 @@
-﻿using TcpDotNet;
+using TcpDotNet;
 using TcpDotNet.ListenerIntegrationTest.PacketHandlers;
 using TcpDotNet.Protocol;
 using TcpDotNet.Protocol.Packets.ClientBound;

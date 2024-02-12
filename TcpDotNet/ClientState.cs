@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet;
+namespace TcpDotNet;
 
 /// <summary>
 ///     An enumeration of states for a <see cref="ClientNode" /> to be in.

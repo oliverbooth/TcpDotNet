@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet.Protocol.Packets.ServerBound;
+namespace TcpDotNet.Protocol.Packets.ServerBound;
 
 /// <summary>
 ///     Represents a packet which requests a handshake with a <see cref="ProtocolListener" />.

@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;

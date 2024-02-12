@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet.Protocol.Packets.ClientBound;
+namespace TcpDotNet.Protocol.Packets.ClientBound;
 
 /// <summary>
 ///     Represents a packet which performs a heartbeat response.

@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet.Protocol;
+namespace TcpDotNet.Protocol;
 
 /// <summary>
 ///     Represents a response packet, which forms a request/response packet pair.

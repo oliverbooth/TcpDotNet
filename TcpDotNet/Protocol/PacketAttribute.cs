@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet.Protocol;
+namespace TcpDotNet.Protocol;
 
 /// <summary>
 ///     Specifies metadata for a <see cref="Packet" />.

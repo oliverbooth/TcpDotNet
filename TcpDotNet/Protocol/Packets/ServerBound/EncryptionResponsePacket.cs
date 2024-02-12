@@ -1,4 +1,4 @@
-﻿using TcpDotNet.Protocol.Packets.ClientBound;
+using TcpDotNet.Protocol.Packets.ClientBound;
 
 namespace TcpDotNet.Protocol.Packets.ServerBound;
 

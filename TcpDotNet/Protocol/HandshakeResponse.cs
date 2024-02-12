@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet.Protocol;
+namespace TcpDotNet.Protocol;
 
 /// <summary>
 ///     An enumeration of handshake responses.

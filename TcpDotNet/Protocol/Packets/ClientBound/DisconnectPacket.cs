@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet.Protocol.Packets.ClientBound;
+namespace TcpDotNet.Protocol.Packets.ClientBound;
 
 [Packet(0x7FFFFFFF)]
 internal sealed class DisconnectPacket : Packet

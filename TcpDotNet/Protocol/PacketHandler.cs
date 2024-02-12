@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet.Protocol;
+namespace TcpDotNet.Protocol;
 
 /// <summary>
 ///     Represents the base class for a packet handler.
