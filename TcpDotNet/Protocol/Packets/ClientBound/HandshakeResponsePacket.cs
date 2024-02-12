@@ -38,14 +38,14 @@ internal sealed class HandshakeResponsePacket : Packet
     /// <inheritdoc />
     protected internal override void Deserialize(ProtocolReader reader)
     {
-        HandshakeResponse = (HandshakeResponse) reader.ReadByte();
+        HandshakeResponse = (HandshakeResponse)reader.ReadByte();
         ProtocolVersion = reader.ReadInt32();
     }
 
     /// <inheritdoc />
     protected internal override void Serialize(ProtocolWriter writer)
     {
-        writer.Write((byte) HandshakeResponse);
+        writer.Write((byte)HandshakeResponse);
         writer.Write(ProtocolVersion);
     }
 }

@@ -22,7 +22,8 @@ internal sealed class HandshakeRequestPacketHandler : PacketHandler<HandshakeReq
 
         if (packet.ProtocolVersion != Node.ProtocolVersion)
         {
-            response = new HandshakeResponsePacket(packet.ProtocolVersion, HandshakeResponse.UnsupportedProtocolVersion);
+            response = new HandshakeResponsePacket(packet.ProtocolVersion,
+                HandshakeResponse.UnsupportedProtocolVersion);
             await client.SendPacketAsync(response, cancellationToken);
             client.Close();
             return;

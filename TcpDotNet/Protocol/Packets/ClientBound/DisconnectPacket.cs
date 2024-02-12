@@ -24,12 +24,12 @@ internal sealed class DisconnectPacket : Packet
     /// <inheritdoc />
     protected internal override void Deserialize(ProtocolReader reader)
     {
-        Reason = (DisconnectReason) reader.ReadByte();
+        Reason = (DisconnectReason)reader.ReadByte();
     }
 
     /// <inheritdoc />
     protected internal override void Serialize(ProtocolWriter writer)
     {
-        writer.Write((byte) Reason);
+        writer.Write((byte)Reason);
     }
 }

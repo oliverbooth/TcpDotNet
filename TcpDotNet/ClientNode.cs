@@ -148,7 +148,7 @@ public abstract class ClientNode : Node
         if (constructor is null)
             return null;
 
-        var packet = (Packet) constructor.Invoke(null);
+        var packet = (Packet)constructor.Invoke(null);
         packet.Deserialize(bufferReader);
         await targetStream.DisposeAsync();
 
@@ -198,7 +198,7 @@ public abstract class ClientNode : Node
             buffer.Position = 0;
         }
 
-        var length = (int) buffer.Length;
+        var length = (int)buffer.Length;
         networkWriter.Write(length);
 
         try
@@ -239,7 +239,8 @@ public abstract class ClientNode : Node
             requestPacket.CallbackId = _callbackIdGenerator.GetId(packetToSend, out _);
 
         var completionSource = new TaskCompletionSource<Packet>();
-        if (!_packetCompletionSources.TryGetValue(attribute.Id, out List<TaskCompletionSource<Packet>>? completionSources))
+        if (!_packetCompletionSources.TryGetValue(attribute.Id,
+                out List<TaskCompletionSource<Packet>>? completionSources))
         {
             completionSources = new List<TaskCompletionSource<Packet>>();
             _packetCompletionSources.TryAdd(attribute.Id, completionSources);
@@ -292,7 +293,8 @@ public abstract class ClientNode : Node
         if (attribute is null)
             throw new ArgumentException($"The packet type {typeof(TPacket).Name} is not a valid packet.");
 
-        if (!_packetCompletionSources.TryGetValue(attribute.Id, out List<TaskCompletionSource<Packet>>? completionSources))
+        if (!_packetCompletionSources.TryGetValue(attribute.Id,
+                out List<TaskCompletionSource<Packet>>? completionSources))
         {
             completionSources = new List<TaskCompletionSource<Packet>>();
             _packetCompletionSources.TryAdd(attribute.Id, completionSources);
@@ -326,7 +328,7 @@ public abstract class ClientNode : Node
             completionSource.SetCanceled();
         }, cancellationToken);
 
-        var packet = (TPacket) await Task.Run(() => completionSource.Task, cancellationToken);
+        var packet = (TPacket)await Task.Run(() => completionSource.Task, cancellationToken);
         if (_packetCompletionSources.TryGetValue(attribute.Id, out completionSources))
         {
             lock (completionSources)

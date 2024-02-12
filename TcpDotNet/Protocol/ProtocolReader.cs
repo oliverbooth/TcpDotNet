@@ -66,7 +66,7 @@ public sealed class ProtocolReader : BinaryReader
             result |= (byteReadJustNow & 0x7Fu) << shift;
 
             if (byteReadJustNow <= 0x7Fu)
-                return (int) result; // early exit
+                return (int)result; // early exit
         }
 
         // Read the 5th byte. Since we already read 28 bits,
@@ -77,8 +77,8 @@ public sealed class ProtocolReader : BinaryReader
         if (byteReadJustNow > 0b_1111u)
             throw new FormatException();
 
-        result |= (uint) byteReadJustNow << (maxBytesWithoutOverflow * 7);
-        return (int) result;
+        result |= (uint)byteReadJustNow << (maxBytesWithoutOverflow * 7);
+        return (int)result;
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public sealed class ProtocolReader : BinaryReader
             result |= (byteReadJustNow & 0x7Ful) << shift;
 
             if (byteReadJustNow <= 0x7Fu)
-                return (long) result; // early exit
+                return (long)result; // early exit
         }
 
         // Read the 10th byte. Since we already read 63 bits,
@@ -118,8 +118,8 @@ public sealed class ProtocolReader : BinaryReader
         if (byteReadJustNow > 0b_1u)
             throw new FormatException();
 
-        result |= (ulong) byteReadJustNow << (maxBytesWithoutOverflow * 7);
-        return (long) result;
+        result |= (ulong)byteReadJustNow << (maxBytesWithoutOverflow * 7);
+        return (long)result;
     }
 
     /// <inheritdoc />
@@ -196,21 +196,21 @@ public sealed class ProtocolReader : BinaryReader
     [CLSCompliant(false)]
     public override ushort ReadUInt16()
     {
-        return (ushort) IPAddress.NetworkToHostOrder((short) base.ReadUInt16());
+        return (ushort)IPAddress.NetworkToHostOrder((short)base.ReadUInt16());
     }
 
     /// <inheritdoc />
     [CLSCompliant(false)]
     public override uint ReadUInt32()
     {
-        return (uint) IPAddress.NetworkToHostOrder((int) base.ReadUInt32());
+        return (uint)IPAddress.NetworkToHostOrder((int)base.ReadUInt32());
     }
 
     /// <inheritdoc />
     [CLSCompliant(false)]
     public override ulong ReadUInt64()
     {
-        return (ulong) IPAddress.NetworkToHostOrder((long) base.ReadUInt64());
+        return (ulong)IPAddress.NetworkToHostOrder((long)base.ReadUInt64());
     }
 
     /// <summary>
