@@ -221,15 +221,13 @@ public abstract class BaseClientNode : Node
     /// </summary>
     /// <param name="packetToSend">The packet to send.</param>
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
-    /// <typeparam name="TSend">The type of the packet to send.</typeparam>
     /// <typeparam name="TReceive">The type of the packet to return.</typeparam>
     /// <returns>The received packet.</returns>
     /// <remarks>
     ///     This method will consume all incoming packets, raising their associated handlers if such packets are recognised.
     /// </remarks>
-    public async Task<TReceive> SendAndReceiveAsync<TSend, TReceive>(TSend packetToSend,
+    public async Task<TReceive> SendAndReceiveAsync<TReceive>(Packet packetToSend,
         CancellationToken cancellationToken = default)
-        where TSend : Packet
         where TReceive : Packet
     {
         var attribute = typeof(TReceive).GetCustomAttribute<PacketAttribute>();
