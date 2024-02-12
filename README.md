@@ -17,7 +17,7 @@ This package is a work-in-progress and not deemed ready for production use. Howe
 ## Installation
 ### NuGet installation
 ```ps
-Install-Package TcpDotNet -Version 0.1.0-nightly.1
+Install-Package TcpDotNet -Version 1.0.0
 ```
 
 ### Manual installation
