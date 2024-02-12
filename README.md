@@ -9,7 +9,7 @@
 </p>
 
 ### About
-TcpDotNet is a .NET Standard 2.1 package that enables you to perform server/client communications over the TCP protocol.
+TcpDotNet is a .NET package that enables you to perform server/client communications over the TCP protocol.
 This package is a work-in-progress and not deemed ready for production use. However, it is available on NuGet as a very crude and early development build. This package will be maintained as I see fit.
 
 *(I'm also [dogfooding](https://www.pcmag.com/encyclopedia/term/dogfooding) this library, so there's that.)*
