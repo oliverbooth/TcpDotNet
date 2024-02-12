@@ -6,14 +6,16 @@ namespace TcpDotNet.Protocol.Packets.ClientBound;
 ///     Represents a packet which responds to a <see cref="HandshakeRequestPacket" />.
 /// </summary>
 [Packet(0x7FFFFFE1)]
-internal sealed class HandshakeResponsePacket : Packet
+internal sealed class HandshakeResponsePacket : ResponsePacket
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="HandshakeResponsePacket" /> class.
     /// </summary>
+    /// <param name="callbackId">The callback ID.</param>
     /// <param name="protocolVersion">The requested protocol version.</param>
     /// <param name="handshakeResponse">The handshake response.</param>
-    public HandshakeResponsePacket(int protocolVersion, HandshakeResponse handshakeResponse)
+    public HandshakeResponsePacket(long callbackId, int protocolVersion, HandshakeResponse handshakeResponse)
+        : base(callbackId)
     {
         ProtocolVersion = protocolVersion;
         HandshakeResponse = handshakeResponse;
