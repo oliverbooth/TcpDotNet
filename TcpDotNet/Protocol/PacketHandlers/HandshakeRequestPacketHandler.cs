@@ -22,14 +22,14 @@ internal sealed class HandshakeRequestPacketHandler : PacketHandler<HandshakeReq
 
         if (packet.ProtocolVersion != Node.ProtocolVersion)
         {
-            response = new HandshakeResponsePacket(packet.ProtocolVersion,
-                HandshakeResponse.UnsupportedProtocolVersion);
+            const HandshakeResponse responseCode = HandshakeResponse.UnsupportedProtocolVersion;
+            response = new HandshakeResponsePacket(packet.CallbackId, packet.ProtocolVersion, responseCode);
             await client.SendPacketAsync(response, cancellationToken);
             client.Close();
             return;
         }
 
-        response = new HandshakeResponsePacket(packet.ProtocolVersion, HandshakeResponse.Success);
+        response = new HandshakeResponsePacket(packet.CallbackId, packet.ProtocolVersion, HandshakeResponse.Success);
         await client.SendPacketAsync(response, cancellationToken);
 
         client.State = ClientState.Encrypting;
