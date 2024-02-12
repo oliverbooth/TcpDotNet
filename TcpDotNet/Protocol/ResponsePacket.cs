@@ -14,6 +14,10 @@ public abstract class ResponsePacket : Packet
         CallbackId = callbackId;
     }
 
+    internal ResponsePacket()
+    {
+    }
+
     /// <summary>
     ///     Gets the response identifier.
     /// </summary>
