@@ -95,8 +95,7 @@ public sealed class ProtocolClient : ClientNode
 
         State = ClientState.Handshaking;
         var handshakeRequest = new HandshakeRequestPacket(ProtocolVersion);
-        var handshakeResponse =
-            await SendAndReceiveAsync<HandshakeResponsePacket>(handshakeRequest, cancellationToken);
+        var handshakeResponse = await SendAndReceiveAsync<HandshakeResponsePacket>(handshakeRequest, cancellationToken);
 
         if (handshakeResponse.HandshakeResponse != HandshakeResponse.Success)
         {
