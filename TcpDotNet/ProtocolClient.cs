@@ -91,7 +91,7 @@ public sealed class ProtocolClient : ClientNode
         }
 
         IsConnected = true;
-        RemoteEndPoint = BaseSocket.RemoteEndPoint;
+        RemoteEndPoint = BaseSocket.RemoteEndPoint!;
 
         State = ClientState.Handshaking;
         var handshakeRequest = new HandshakeRequestPacket(ProtocolVersion);
