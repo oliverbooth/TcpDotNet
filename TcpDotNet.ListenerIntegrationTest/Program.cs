@@ -10,7 +10,10 @@ listener.ClientDisconnected += (_, e) => Console.WriteLine($"Client {e.Client.Se
 
 listener.RegisterPacketHandler(new HelloPacketHandler());
 listener.RegisterPacketHandler(new PingPacketHandler());
+
+Console.WriteLine("Starting listener");
 listener.Start(1234);
+Console.WriteLine($"Listener started on {listener.LocalEndPoint}");
 
 await Task.Delay(-1);
 

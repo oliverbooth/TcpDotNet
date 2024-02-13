@@ -11,7 +11,10 @@ client.Disconnected += (_, e) => Console.WriteLine($"Disconnected: {e.Disconnect
 
 client.RegisterPacketHandler(PacketHandler<PongPacket>.Empty);
 client.RegisterPacketHandler(new GoodbyePacketHandler());
-await client.ConnectAsync(IPAddress.IPv6Loopback, 1234);
+
+var remoteEP = new IPEndPoint(IPAddress.Loopback, 1234);
+Console.WriteLine($"Connecting to {remoteEP}");
+await client.ConnectAsync(remoteEP);
 
 Console.WriteLine($"Connected to {client.RemoteEndPoint}. My session is {client.SessionId}");
 
