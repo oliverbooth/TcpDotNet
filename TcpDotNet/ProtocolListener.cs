@@ -109,7 +109,7 @@ public sealed partial class ProtocolListener : Node
             BaseSocket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
 
         BaseSocket.Bind(localEP);
-        BaseSocket.Listen(10);
+        BaseSocket.Listen();
         IsRunning = true;
 
         Started?.Invoke(this, EventArgs.Empty);
