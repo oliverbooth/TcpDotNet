@@ -295,11 +295,11 @@ public abstract class ClientNode : Node
                 }
                 catch (TaskCanceledException)
                 {
-                    completionSource.SetCanceled();
+                    completionSource.SetCanceled(cancellationToken);
                 }
             }
 
-            completionSource.SetCanceled();
+            completionSource.SetCanceled(cancellationToken);
         }, cancellationToken);
 
         var packet = (TPacket)await Task.Run(() => completionSource.Task, cancellationToken);
