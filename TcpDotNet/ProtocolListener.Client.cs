@@ -8,7 +8,7 @@ public sealed partial class ProtocolListener
     /// <summary>
     ///     Represents a client that is connected to a <see cref="ProtocolListener" />.
     /// </summary>
-    public sealed class Client : BaseClientNode
+    public sealed class Client : ClientNode
     {
         internal Client(ProtocolListener listener, Socket socket)
         {
@@ -35,7 +35,8 @@ public sealed partial class ProtocolListener
             foreach (Type packetType in ParentListener.RegisteredPackets.Values)
                 RegisterPacket(packetType);
 
-            foreach ((Type packetType, IReadOnlyCollection<PacketHandler>? handlers) in ParentListener.RegisteredPacketHandlers)
+            foreach ((Type packetType, IReadOnlyCollection<PacketHandler>? handlers) in ParentListener
+                         .RegisteredPacketHandlers)
             foreach (PacketHandler handler in handlers)
                 RegisterPacketHandler(packetType, handler);
 

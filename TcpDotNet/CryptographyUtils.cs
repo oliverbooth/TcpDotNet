@@ -1,4 +1,4 @@
-﻿using Chilkat;
+using Chilkat;
 
 namespace TcpDotNet;
 

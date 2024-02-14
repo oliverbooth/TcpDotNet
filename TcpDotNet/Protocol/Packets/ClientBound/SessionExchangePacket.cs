@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet.Protocol.Packets.ClientBound;
+namespace TcpDotNet.Protocol.Packets.ClientBound;
 
 [Packet(0x7FFFFFE4)]
 internal sealed class SessionExchangePacket : Packet

@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet.Protocol;
+namespace TcpDotNet.Protocol;
 
 /// <summary>
 ///     Represents a response packet, which forms a request/response packet pair.
@@ -12,6 +12,10 @@ public abstract class ResponsePacket : Packet
     protected ResponsePacket(long callbackId)
     {
         CallbackId = callbackId;
+    }
+
+    internal ResponsePacket()
+    {
     }
 
     /// <summary>

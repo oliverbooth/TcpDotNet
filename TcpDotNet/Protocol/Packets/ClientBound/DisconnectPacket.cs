@@ -1,4 +1,4 @@
-﻿namespace TcpDotNet.Protocol.Packets.ClientBound;
+namespace TcpDotNet.Protocol.Packets.ClientBound;
 
 [Packet(0x7FFFFFFF)]
 internal sealed class DisconnectPacket : Packet
@@ -24,12 +24,12 @@ internal sealed class DisconnectPacket : Packet
     /// <inheritdoc />
     protected internal override void Deserialize(ProtocolReader reader)
     {
-        Reason = (DisconnectReason) reader.ReadByte();
+        Reason = (DisconnectReason)reader.ReadByte();
     }
 
     /// <inheritdoc />
     protected internal override void Serialize(ProtocolWriter writer)
     {
-        writer.Write((byte) Reason);
+        writer.Write((byte)Reason);
     }
 }

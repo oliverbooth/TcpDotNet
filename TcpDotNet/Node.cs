@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Net.Sockets;
 using System.Reflection;
@@ -38,7 +38,8 @@ public abstract class Node : IDisposable
     /// <value>The registered packets.</value>
     public IReadOnlyDictionary<Type, IReadOnlyCollection<PacketHandler>> RegisteredPacketHandlers =>
         new ReadOnlyDictionary<Type, IReadOnlyCollection<PacketHandler>>(
-            _registeredPacketHandlers.ToDictionary(p => p.Key, p => (IReadOnlyCollection<PacketHandler>) p.Value.AsReadOnly()));
+            _registeredPacketHandlers.ToDictionary(p => p.Key,
+                p => (IReadOnlyCollection<PacketHandler>)p.Value.AsReadOnly()));
 
     /// <summary>
     ///     Closes the base socket connection and releases all associated resources.
@@ -124,7 +125,8 @@ public abstract class Node : IDisposable
         var attribute = packetType.GetCustomAttribute<PacketAttribute>();
         if (attribute is null) throw new ArgumentException($"{packetType.Name} is not a valid packet.");
         if (_registeredPackets.TryGetValue(attribute.Id, out Type? registeredPacket))
-            throw new ArgumentException($"The packet type {attribute.Id:X8} is already registered to {registeredPacket.Name}.");
+            throw new ArgumentException(
+                $"The packet type {attribute.Id:X8} is already registered to {registeredPacket.Name}.");
 
         _registeredPackets.TryAdd(attribute.Id, packetType);
     }

@@ -1,10 +1,10 @@
-﻿namespace TcpDotNet.Protocol.Packets.ServerBound;
+namespace TcpDotNet.Protocol.Packets.ServerBound;
 
 /// <summary>
 ///     Represents a packet which requests a handshake with a <see cref="ProtocolListener" />.
 /// </summary>
 [Packet(0x7FFFFFE0)]
-internal sealed class HandshakeRequestPacket : Packet
+internal sealed class HandshakeRequestPacket : RequestPacket
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="HandshakeRequestPacket" /> class.

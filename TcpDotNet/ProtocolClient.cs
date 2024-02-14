@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using TcpDotNet.EventData;
@@ -14,7 +14,7 @@ namespace TcpDotNet;
 /// <summary>
 ///     Represents a client on the TcpDotNet protocol.
 /// </summary>
-public sealed class ProtocolClient : BaseClientNode
+public sealed class ProtocolClient : ClientNode
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProtocolClient" /> class.
@@ -30,7 +30,7 @@ public sealed class ProtocolClient : BaseClientNode
     /// <summary>
     ///     Occurs when the client has been disconnected.
     /// </summary>
-    public event EventHandler<DisconnectedEventArgs>? Disconnected;
+    public event AsyncEventHandler<DisconnectedEventArgs>? Disconnected;
 
     /// <summary>
     ///     Establishes a connection to a remote host.
@@ -82,7 +82,7 @@ public sealed class ProtocolClient : BaseClientNode
         BaseSocket = new Socket(remoteEP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         try
         {
-            await Task.Run(() => BaseSocket.ConnectAsync(remoteEP), cancellationToken);
+            await BaseSocket.ConnectAsync(remoteEP, cancellationToken);
         }
         catch
         {
@@ -91,19 +91,20 @@ public sealed class ProtocolClient : BaseClientNode
         }
 
         IsConnected = true;
-        RemoteEndPoint = BaseSocket.RemoteEndPoint;
+        RemoteEndPoint = BaseSocket.RemoteEndPoint!;
 
         State = ClientState.Handshaking;
         var handshakeRequest = new HandshakeRequestPacket(ProtocolVersion);
-        var handshakeResponse =
-            await SendAndReceiveAsync<HandshakeRequestPacket, HandshakeResponsePacket>(handshakeRequest, cancellationToken);
+        await SendPacketAsync(handshakeRequest, cancellationToken);
 
+        var handshakeResponse = await WaitForPacketAsync<HandshakeResponsePacket>(cancellationToken);
         if (handshakeResponse.HandshakeResponse != HandshakeResponse.Success)
         {
             Close();
             IsConnected = false;
-            throw new InvalidOperationException("Handshake failed. " +
-                                                $"Server responded with {handshakeResponse.HandshakeResponse:D}");
+
+            var message = $"Handshake failed. Server responded with {handshakeResponse.HandshakeResponse:D}";
+            throw new InvalidOperationException(message);
         }
 
         State = ClientState.Encrypting;
@@ -113,8 +114,7 @@ public sealed class ProtocolClient : BaseClientNode
         byte[] encryptedPayload = rsa.Encrypt(encryptionRequest.Payload, true);
 
         var key = new byte[128];
-        using var rng = new RNGCryptoServiceProvider();
-        rng.GetBytes(key);
+        RandomNumberGenerator.Fill(key);
 
         Aes = CryptographyUtils.GenerateAes(key);
         byte[] aesKey = rsa.Encrypt(key, true);

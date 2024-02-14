@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,7 +38,11 @@ public sealed class ProtocolWriter : BinaryWriter
     public override void Write(double value)
     {
         Span<byte> buffer = stackalloc byte[8];
+#if NET8_0_OR_GREATER
+        MemoryMarshal.TryWrite(buffer, in value);
+#else
         MemoryMarshal.TryWrite(buffer, ref value);
+#endif
 
         if (BitConverter.IsLittleEndian) buffer.Reverse();
         Write(buffer);
@@ -89,7 +93,11 @@ public sealed class ProtocolWriter : BinaryWriter
     public override void Write(float value)
     {
         Span<byte> buffer = stackalloc byte[4];
+#if NET8_0_OR_GREATER
+        MemoryMarshal.TryWrite(buffer, in value);
+#else
         MemoryMarshal.TryWrite(buffer, ref value);
+#endif
 
         if (BitConverter.IsLittleEndian) buffer.Reverse();
         Write(buffer);
@@ -99,21 +107,21 @@ public sealed class ProtocolWriter : BinaryWriter
     [CLSCompliant(false)]
     public override void Write(ushort value)
     {
-        base.Write((ushort) IPAddress.HostToNetworkOrder((short) value));
+        base.Write((ushort)IPAddress.HostToNetworkOrder((short)value));
     }
 
     /// <inheritdoc />
     [CLSCompliant(false)]
     public override void Write(uint value)
     {
-        base.Write((uint) IPAddress.HostToNetworkOrder((int) value));
+        base.Write((uint)IPAddress.HostToNetworkOrder((int)value));
     }
 
     /// <inheritdoc />
     [CLSCompliant(false)]
     public override void Write(ulong value)
     {
-        base.Write((ulong) IPAddress.HostToNetworkOrder((long) value));
+        base.Write((ulong)IPAddress.HostToNetworkOrder((long)value));
     }
 
     /// <summary>
@@ -155,7 +163,7 @@ public sealed class ProtocolWriter : BinaryWriter
     /// <param name="value">The 32-bit integer to be written.</param>
     public void Write7BitEncodedInt32(int value)
     {
-        var uValue = (uint) value;
+        var uValue = (uint)value;
 
         // Write out an int 7 bits at a time. The high bit of the byte,
         // when on, tells reader to continue reading more bytes.
@@ -165,11 +173,11 @@ public sealed class ProtocolWriter : BinaryWriter
 
         while (uValue > 0x7Fu)
         {
-            Write((byte) (uValue | ~0x7Fu));
+            Write((byte)(uValue | ~0x7Fu));
             uValue >>= 7;
         }
 
-        Write((byte) uValue);
+        Write((byte)uValue);
     }
 
     /// <summary>
@@ -178,7 +186,7 @@ public sealed class ProtocolWriter : BinaryWriter
     /// <param name="value">The 64-bit integer to be written.</param>
     public void Write7BitEncodedInt64(long value)
     {
-        var uValue = (ulong) value;
+        var uValue = (ulong)value;
 
         // Write out an int 7 bits at a time. The high bit of the byte,
         // when on, tells reader to continue reading more bytes.
@@ -188,10 +196,10 @@ public sealed class ProtocolWriter : BinaryWriter
 
         while (uValue > 0x7Fu)
         {
-            Write((byte) ((uint) uValue | ~0x7Fu));
+            Write((byte)((uint)uValue | ~0x7Fu));
             uValue >>= 7;
         }
 
-        Write((byte) uValue);
+        Write((byte)uValue);
     }
 }

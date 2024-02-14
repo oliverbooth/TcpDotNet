@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using TcpDotNet.Protocol.Packets.ClientBound;
 using TcpDotNet.Protocol.Packets.ServerBound;
 
@@ -11,7 +11,7 @@ internal sealed class EncryptionResponsePacketHandler : PacketHandler<Encryption
 {
     /// <inheritdoc />
     public override async Task HandleAsync(
-        BaseClientNode recipient,
+        ClientNode recipient,
         EncryptionResponsePacket packet,
         CancellationToken cancellationToken = default
     )
