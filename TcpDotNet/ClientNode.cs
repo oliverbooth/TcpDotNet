@@ -16,6 +16,7 @@ public abstract class ClientNode : Node
 {
     private readonly ConcurrentDictionary<int, List<TaskCompletionSource<Packet>>> _packetCompletionSources = new();
     private readonly ConcurrentDictionary<long, TaskCompletionSource<ResponsePacket>> _callbackCompletionSources = new();
+
     private EndPoint? _remoteEP;
 
     /// <summary>
@@ -159,6 +160,9 @@ public abstract class ClientNode : Node
                     completionSource.SetResult(packet);
             }
         }
+
+        if (packet is ResponsePacket response && _callbackCompletionSources.TryGetValue(response.CallbackId, out TaskCompletionSource<ResponsePacket>? callback))
+            callback.SetResult(response);
 
         return packet;
     }
