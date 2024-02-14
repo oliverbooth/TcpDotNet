@@ -140,10 +140,7 @@ public abstract class ClientNode : Node
             return null;
         }
 
-        const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-        ConstructorInfo? constructor =
-            packetType.GetConstructors(bindingFlags).FirstOrDefault(c => c.GetParameters().Length == 0);
-
+        ConstructorInfo? constructor = GetConstructor(packetType);
         if (constructor is null)
             return null;
 
@@ -257,6 +254,24 @@ public abstract class ClientNode : Node
     {
         var completionSource = new TaskCompletionSource<Packet>();
         return WaitForPacketAsync<TPacket>(completionSource, cancellationToken);
+    }
+
+    private static ConstructorInfo? GetConstructor(Type packetType)
+    {
+        const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+        ConstructorInfo[] constructors = packetType.GetConstructors(bindingFlags);
+        ConstructorInfo? constructor = null;
+        for (var index = 0; index < constructors.Length; index++)
+        {
+            ConstructorInfo current = constructors[index];
+            if (current.GetParameters().Length == 0)
+            {
+                constructor = current;
+                break;
+            }
+        }
+
+        return constructor;
     }
 
     private async Task<TPacket> WaitForPacketAsync<TPacket>(TaskCompletionSource<Packet> completionSource,
