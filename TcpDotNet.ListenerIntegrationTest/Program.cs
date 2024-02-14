@@ -5,8 +5,16 @@ using TcpDotNet.Protocol.Packets.ClientBound;
 using TcpDotNet.Protocol.Packets.ServerBound;
 
 var listener = new ProtocolListener();
-listener.ClientConnected += (_, e) => Console.WriteLine($"Client connected from {e.Client.RemoteEndPoint} with session {e.Client.SessionId}");
-listener.ClientDisconnected += (_, e) => Console.WriteLine($"Client {e.Client.SessionId} disconnected ({e.DisconnectReason})");
+listener.ClientConnected += (_, e) =>
+{
+    Console.WriteLine($"Client connected from {e.Client.RemoteEndPoint} with session {e.Client.SessionId}");
+    return Task.CompletedTask;
+};
+listener.ClientDisconnected += (_, e) =>
+{
+    Console.WriteLine($"Client {e.Client.SessionId} disconnected ({e.DisconnectReason})");
+    return Task.CompletedTask;
+};
 
 listener.RegisterPacketHandler(new HelloPacketHandler());
 listener.RegisterPacketHandler(new PingPacketHandler());

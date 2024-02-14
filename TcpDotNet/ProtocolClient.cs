@@ -30,7 +30,7 @@ public sealed class ProtocolClient : ClientNode
     /// <summary>
     ///     Occurs when the client has been disconnected.
     /// </summary>
-    public event EventHandler<DisconnectedEventArgs>? Disconnected;
+    public event AsyncEventHandler<DisconnectedEventArgs>? Disconnected;
 
     /// <summary>
     ///     Establishes a connection to a remote host.

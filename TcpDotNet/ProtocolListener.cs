@@ -27,27 +27,27 @@ public sealed partial class ProtocolListener : Node
     /// <summary>
     ///     Occurs when a client connects to the listener.
     /// </summary>
-    public event EventHandler<ClientConnectedEventArgs>? ClientConnected;
+    public event AsyncEventHandler<ClientConnectedEventArgs>? ClientConnected;
 
     /// <summary>
     ///     Occurs when a client disconnects from the listener.
     /// </summary>
-    public event EventHandler<ClientDisconnectedEventArgs>? ClientDisconnected;
+    public event AsyncEventHandler<ClientDisconnectedEventArgs>? ClientDisconnected;
 
     /// <summary>
     ///     Occurs when a client sends a packet to the listener.
     /// </summary>
-    public event EventHandler<ClientPacketReceivedEventArgs>? ClientPacketReceived;
+    public event AsyncEventHandler<ClientPacketReceivedEventArgs>? ClientPacketReceived;
 
     /// <summary>
     ///     Occurs when the server has started.
     /// </summary>
-    public event EventHandler? Started;
+    public event AsyncEventHandler? Started;
 
     /// <summary>
     ///     Occurs when the server has started.
     /// </summary>
-    public event EventHandler? Stopped;
+    public event AsyncEventHandler? Stopped;
 
     /// <summary>
     ///     Gets a read-only view of the clients connected to this listener.

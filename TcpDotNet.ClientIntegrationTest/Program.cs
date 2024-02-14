@@ -7,7 +7,11 @@ using TcpDotNet.Protocol.Packets.ClientBound;
 using TcpDotNet.Protocol.Packets.ServerBound;
 
 using var client = new ProtocolClient();
-client.Disconnected += (_, e) => Console.WriteLine($"Disconnected: {e.DisconnectReason}");
+client.Disconnected += (_, e) =>
+{
+    Console.WriteLine($"Disconnected: {e.DisconnectReason}");
+    return Task.CompletedTask;
+};
 
 client.RegisterPacketHandler(PacketHandler<PongPacket>.Empty);
 client.RegisterPacketHandler(new GoodbyePacketHandler());
