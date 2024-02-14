@@ -236,12 +236,16 @@ public abstract class ClientNode : Node
     {
         if (packet is null) throw new ArgumentNullException(nameof(packet));
 
+        long callbackId = packet.CallbackId;
         var completionSource = new TaskCompletionSource<ResponsePacket>();
-        if (!_callbackCompletionSources.TryAdd(packet.CallbackId, completionSource))
+
+        if (!_callbackCompletionSources.TryAdd(callbackId, completionSource))
             throw new InvalidOperationException("Duplicate packet sent");
 
         await SendPacketAsync(packet, cancellationToken);
-        return (TReceive)await completionSource.Task;
+        var response = (TReceive)await completionSource.Task;
+        _callbackCompletionSources.TryRemove(callbackId, out _);
+        return response;
     }
 
     /// <summary>
